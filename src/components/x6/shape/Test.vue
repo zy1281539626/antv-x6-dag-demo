@@ -1,15 +1,21 @@
 <template>
   <div>
-    <button type="button">123</button>
+    <div class="test-wrap">
+      <button type="button">123</button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TestShape',
+  name: "TestShape",
   inject: ["getGraph", "getNode"],
-}
+};
 </script>
 
-<style>
+<style lang="scss" scoped>
+.test-wrap {
+  text-align: center;
+  border: 1px solid red;
+}
 </style>

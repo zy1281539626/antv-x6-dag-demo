@@ -6,26 +6,29 @@
 </template>
 
 <script>
-import { Graph, Addon, Shape } from '@antv/x6';
-import { shapeList } from './shape'
+import { Graph, Addon, Shape } from "@antv/x6";
+import { shapeList } from "./shape";
+
+import Count from "./shape/Test.vue";
+
 export default {
-  name: 'x6',
+  name: "x6",
   data() {
     return {
       stencil: null,
       graph: null,
-    }
+    };
   },
   mounted() {
     // 初始化画布
     this.graph = new Graph({
-      container: this.$refs['graphContainer'],
+      container: this.$refs["graphContainer"],
       background: {
-        color: '#fffbe6'
+        color: "#fffbe6",
       },
       grid: {
         size: 10,
-        visible: true
+        visible: true,
       },
       snapline: true, // 对齐线
       scroller: {
@@ -36,59 +39,59 @@ export default {
       },
       mousewheel: {
         enabled: true,
-        modifiers: ['ctrl', 'meta'],
+        modifiers: ["ctrl", "meta"],
       },
-    })
+    });
 
     // 初始化组件面板
-    const { Stencil } = Addon
+    const { Stencil } = Addon;
     this.stencil = new Stencil({
-      title: '组件',
+      title: "组件",
       target: this.graph,
       search(cell, keyword) {
-        return cell.shape.indexOf(keyword) !== -1
+        return cell.shape.indexOf(keyword) !== -1;
       },
-      placeholder: 'Search by shape name',
-      notFoundText: 'Not Found',
+      placeholder: "Search by shape name",
+      notFoundText: "Not Found",
       collapsable: true,
-      stencilGraphWidth: 200,
-      stencilGraphHeight: 180,
+      stencilGraphWidth: 250,
+      stencilGraphHeight: 200,
       groups: [
         {
-          name: 'group1',
-          title: 'Group',
+          name: "group1",
+          title: "Group",
           collapsable: false,
+          layout() {
+            return {
+              columns: 1,
+              dx: 10,
+              dy: 10,
+            };
+          },
         },
         {
-          name: 'group2',
-          title: 'Group(Collapsable)',
+          name: "group2",
+          title: "Group(Collapsable)",
         },
       ],
-    })
-    this.$refs['stencilContainer'].appendChild(this.stencil.container)
-
-
+    });
+    this.$refs["stencilContainer"].appendChild(this.stencil.container);
 
     // 注册组件
-    shapeList.forEach(item => {
-      Graph.registerNode(item.name, item.node)
-
-      // const { Rect } = Shape
-      // const r = new Rect({
-      //   width: 70,
-      //   height: 40,
-      //   attrs: {
-      //     rect: { fill: '#31D0C6', stroke: '#4B4A67', strokeWidth: 6 },
-      //     text: { text: 'rect', fill: 'white' },
-      //   },
-      // })
-      // this.stencil.load([r], 'group1')
-      console.log(item.name)
-      this.stencil.load({ shape: item.name }, 'group1')
-    })
-
-  }
-}
+    shapeList.forEach((item) => {
+      Graph.registerVueComponent(item.name, item.node, true);
+    });
+    this.stencil.load(
+      shapeList.map((item) => ({
+        shape: "vue-shape",
+        component: item.name,
+        width: 250,
+        height: 40,
+      })),
+      "group1"
+    );
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -99,6 +102,7 @@ export default {
   .stencil-container {
     position: relative;
     width: 250px;
+    flex-shrink: 0;
   }
 
   .graph-container {
