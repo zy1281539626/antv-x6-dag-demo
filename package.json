@@ -7,6 +7,9 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@antv/x6": "^1.32.3",
+    "@antv/x6-vue-shape": "^1.4.0",
+    "@vue/composition-api": "^1.6.2",
     "core-js": "^3.8.3",
     "vue": "^2.6.14"
   },
