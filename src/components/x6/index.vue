@@ -44,8 +44,7 @@ export default {
     });
 
     // 初始化组件面板
-    const { Stencil } = Addon;
-    this.stencil = new Stencil({
+    this.stencil = new Addon.Stencil({
       title: "组件",
       target: this.graph,
       search(cell, keyword) {
@@ -61,13 +60,15 @@ export default {
           name: "group1",
           title: "Group",
           collapsable: false,
-          layout() {
-            return {
-              columns: 1,
-              dx: 10,
-              dy: 10,
-            };
-          },
+          layoutOptions: {
+            columns: 1,
+            rowhHeight: 40
+          }
+          // layout(model, group) {
+          //   group.layoutOptions = {
+          //     columns: 1
+          //   }
+          // },
         },
         {
           name: "group2",
@@ -85,8 +86,8 @@ export default {
       shapeList.map((item) => ({
         shape: "vue-shape",
         component: item.name,
-        width: 250,
-        height: 40,
+        width: 200,
+        height: 24
       })),
       "group1"
     );

@@ -5,7 +5,7 @@ import Test from "./Test.vue";
 const shapeList = [
   {
     name: "dag-test",
-    group: "组1",
+    group: "group1",
     node: {
       template: `<Test />`,
       components: {
