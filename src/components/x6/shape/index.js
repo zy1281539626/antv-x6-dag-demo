@@ -12,6 +12,38 @@ const shapeList = [
         Test,
       },
     },
+    width: 100,
+    height: 24
+  },
+  {
+    name: "dag-test1",
+    group: "group1",
+    node: {
+      template: `<Test />`,
+      components: {
+        Test,
+      },
+    },
+  },
+  {
+    name: "dag-test2",
+    group: "group1",
+    node: {
+      template: `<Test />`,
+      components: {
+        Test,
+      },
+    },
+  },
+  {
+    name: "dag-test3",
+    group: "group1",
+    node: {
+      template: `<Test />`,
+      components: {
+        Test,
+      },
+    },
   },
 ];
 
