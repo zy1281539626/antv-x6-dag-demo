@@ -10,6 +10,8 @@ import { Graph, Addon } from "@antv/x6";
 import { shapeGroups } from "./shape";
 import _ from "lodash-es";
 
+import DataJson from "./data";
+
 export default {
   name: "x6",
   data() {
@@ -72,6 +74,7 @@ export default {
           component: node.name,
           width: node.width || 100, // 模板组件宽度
           height: node.height || 24, // 模板组件高度
+          ports: node.ports,
         })),
         group.name
       );
@@ -81,6 +84,24 @@ export default {
           group?.layoutOptions?.dy * 2,
       });
     });
+
+    setTimeout(() => {
+      this.initData();
+    }, 2000);
+  },
+  methods: {
+    initData() {
+      const cells = [];
+      DataJson.forEach((item) => {
+        if (item.shape === "dag-edge") {
+          cells.push(this.graph.createEdge(item));
+        } else {
+          delete item.component;
+          cells.push(this.graph.createNode(item));
+        }
+      });
+      this.graph.resetCells(cells);
+    },
   },
 };
 </script>
