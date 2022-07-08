@@ -30,10 +30,15 @@ export default {
     const self = this;
     const node = this.getNode();
     console.log(node);
+    setTimeout(() => {
+      // self.status = "success";
+      node.setData({ "aa": 22 })
+    }, 1000);
     // this.label = node.data.label;
     node.on("change:data", ({ current }) => {
-      self.label = current.label;
-      self.status = current.status;
+      console.log(current);
+      // self.label = current.label;
+      // self.status = current.status;
     });
   },
 };
@@ -72,6 +77,7 @@ export default {
   &.failed {
     border-left: 4px solid #ff4d4f;
   }
+
   &.running .status-img {
     animation: spin 1s linear infinite;
   }
@@ -81,6 +87,7 @@ export default {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

@@ -3,6 +3,23 @@ import "@antv/x6-vue-shape";
 import Test from "./Test.vue";
 import DagNode from "./DagNode.vue";
 
+const portsGroup = ["top","bottom","left","right"].reduce((caculate, item)=>{
+  caculate.groups[item] = {
+    position: item,
+    attrs: {
+      circle: {
+        r: 4,
+        magnet: true,
+        stroke: "#C2C8D5",
+        strokeWidth: 1,
+        fill: "#fff",
+      },
+    },
+  }
+  return caculate
+}, {groups: {}})
+
+
 const shapeGroups = [
   {
     name: "group1",
@@ -22,38 +39,28 @@ const shapeGroups = [
           template: `<dag-node />`,
           components: {
             DagNode,
-          },
+          }
         },
         width: 180,
         height: 36,
-        ports: {
-          groups: {
-            top: {
-              position: "top",
-              attrs: {
-                circle: {
-                  r: 4,
-                  magnet: true,
-                  stroke: "#C2C8D5",
-                  strokeWidth: 1,
-                  fill: "#fff",
-                },
-              },
-            },
-            bottom: {
-              position: "bottom",
-              attrs: {
-                circle: {
-                  r: 4,
-                  magnet: true,
-                  stroke: "#C2C8D5",
-                  strokeWidth: 1,
-                  fill: "#fff",
-                },
-              },
-            },
+        ports: [
+          {
+            id: 'port1',
+            group: 'top',
           },
-        },
+          {
+            id: 'port2',
+            group: 'bottom',
+          },
+          {
+            id: 'port3',
+            group: 'bottom',
+          },
+          {
+            id: 'port4',
+            group: 'right',
+          }
+        ]
       },
       {
         name: "dag-test1",
@@ -101,4 +108,4 @@ const shapeGroups = [
   },
 ];
 
-export { shapeGroups };
+export { shapeGroups, portsGroup };
