@@ -83,6 +83,24 @@ export default {
   }
 }
 
+.x6-node-selected .node {
+  border-color: #1890ff;
+  border-radius: 2px;
+  box-shadow: 0 0 0 4px #d4e8fe;
+}
+
+.x6-node-selected .node.success {
+  border-color: #52c41a;
+  border-radius: 2px;
+  box-shadow: 0 0 0 4px #ccecc0;
+}
+
+.x6-node-selected .node.failed {
+  border-color: #ff4d4f;
+  border-radius: 2px;
+  box-shadow: 0 0 0 4px #fedcdc;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

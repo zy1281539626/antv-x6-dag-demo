@@ -63,19 +63,19 @@ export default {
       background: {
         color: "#f5f7fa",
       },
-      grid: {
+      grid: { // 网格样式
         size: 10,
         type: "doubleMesh",
         visible: true,
         args: [
           {
-            color: '#E7E8EA', // 主网格线颜色
-            thickness: 1,     // 主网格线宽度
+            color: '#E7E8EA',
+            thickness: 1,
           },
           {
-            color: '#CBCED3', // 次网格线颜色
-            thickness: 1,     // 次网格线宽度
-            factor: 5,        // 主次网格线间隔
+            color: '#CBCED3',
+            thickness: 1,
+            factor: 5,
           },
         ]
       },
@@ -86,11 +86,26 @@ export default {
         pageVisible: true,
         pageBreak: false,
       },
-      mousewheel: {
+      mousewheel: { // 鼠标滚轮放大缩小
         enabled: true,
         modifiers: ["ctrl", "meta"],
+        factor: 1.1,
+        maxScale: 1.5,
+        minScale: 0.5,
       },
-      connecting: {
+      highlighting: { // 指定触发某种交互时的高亮样式
+        magnetAdsorbed: { // 当链接桩可以被链接时
+          name: 'stroke',
+          args: {
+            attrs: {
+              fill: '#fff',
+              stroke: '#31d0c6',
+              strokeWidth: 4,
+            },
+          },
+        },
+      },
+      connecting: { // 全局的连线规则
         snap: true,
         allowBlank: false,
         allowLoop: false,
@@ -105,13 +120,21 @@ export default {
           return this.graph.createEdge({
             shape: 'dag-edge',
             attrs: {
-              line: {
-                strokeDasharray: '5 5',
-              },
+              // line: {
+              //   strokeDasharray: '5 5',
+              // },
             },
             zIndex: -1,
           })
         },
+      },
+      selecting: {
+        enabled: true,
+        multiple: true,   // 启动多选
+        rubberEdge: true, // 框选包含边线
+        rubberNode: true, // 框选包含节点
+        modifiers: 'shift',
+        rubberband: true, // 启用框选,按'modifiers'配置
       },
     });
 
@@ -166,7 +189,8 @@ export default {
   },
   methods: {
     initData() {
-      const aa = [{ "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "3a58cb37-d859-4571-ad80-d53ef78a81a6", "zIndex": -1, "source": { "cell": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "port": "port2" }, "target": { "cell": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "port": "port1" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "d3c38593-9cd4-4f52-98b3-5b1a2d64dee7", "zIndex": -1, "source": { "cell": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "port": "port3" }, "target": { "cell": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "port": "port1" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "c3e64495-eaae-469e-94e9-72ac01765156", "zIndex": -1, "source": { "cell": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "port": "port4" }, "target": { "cell": "663488cd-62b5-4903-8f26-4c5e85125a2b", "port": "port4" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "8eef043d-41c5-4311-a7c9-d7ac056f12dc", "zIndex": -1, "source": { "cell": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "port": "port3" }, "target": { "cell": "663488cd-62b5-4903-8f26-4c5e85125a2b", "port": "port1" } }, { "x": 300, "y": 120, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "data": { "aa": 22 }, "zIndex": 1 }, { "x": 110, "y": 260, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "data": { "aa": 22 }, "zIndex": 2 }, { "x": 450, "y": 200, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "data": { "aa": 22 }, "zIndex": 3 }, { "x": 330, "y": 420, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "663488cd-62b5-4903-8f26-4c5e85125a2b", "data": { "aa": 22 }, "zIndex": 4 }]
+      let aa = [{ "shape": "dag-edge", "id": "3a58cb37-d859-4571-ad80-d53ef78a81a6", "zIndex": -1, "source": { "cell": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "port": "port2" }, "target": { "cell": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "port": "port1" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "d3c38593-9cd4-4f52-98b3-5b1a2d64dee7", "zIndex": -1, "source": { "cell": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "port": "port3" }, "target": { "cell": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "port": "port1" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "c3e64495-eaae-469e-94e9-72ac01765156", "zIndex": -1, "source": { "cell": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "port": "port4" }, "target": { "cell": "663488cd-62b5-4903-8f26-4c5e85125a2b", "port": "port4" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "8eef043d-41c5-4311-a7c9-d7ac056f12dc", "zIndex": -1, "source": { "cell": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "port": "port3" }, "target": { "cell": "663488cd-62b5-4903-8f26-4c5e85125a2b", "port": "port1" } }, { "x": 300, "y": 120, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "data": { "aa": 22 }, "zIndex": 1 }, { "x": 110, "y": 260, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "data": { "aa": 22 }, "zIndex": 2 }, { "x": 450, "y": 200, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "data": { "aa": 22 }, "zIndex": 3 }, { "x": 330, "y": 420, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "663488cd-62b5-4903-8f26-4c5e85125a2b", "data": { "aa": 22 }, "zIndex": 4 }]
+      aa = [{ "shape": "dag-edge", "id": "dc4d0d20-9d11-48ed-9833-c5b84e3390bd", "zIndex": -1, "source": { "cell": "60ddeed0-3d3e-47b5-8f85-87e4bb5d8a87", "port": "port2" }, "target": { "cell": "23ccb0da-05a1-4be4-8d4a-d62232aa10c2", "port": "port1" } }, { "x": 250, "y": 180, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "60ddeed0-3d3e-47b5-8f85-87e4bb5d8a87", "data": { "aa": 22 }, "zIndex": 1 }, { "x": 110, "y": 320, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "23ccb0da-05a1-4be4-8d4a-d62232aa10c2", "data": { "aa": 22 }, "zIndex": 2 }]
 
       const cells = []
       aa.forEach((item) => {
@@ -180,12 +204,12 @@ export default {
     },
     getJSON() {
       const originData = this.graph.toJSON()
-      // console.log(originData)
+      console.log(originData)
       const formatData = originData.cells.map(item => {
         if (item.shape === "dag-node") {
           return {
             ...item.position,
-            ...item.size,
+            // ...item.size,
             shape: item.shape,
             ports: item.ports.items,
             id: item.id,
@@ -215,6 +239,16 @@ export default {
 
   .graph-container {
     flex: 1;
+
+    ::v-deep .x6-edge:hover path:nth-child(2) {
+      stroke: #1890ff;
+      stroke-width: 1px;
+    }
+
+    ::v-deep .x6-edge-selected path:nth-child(2) {
+      stroke: #1890ff;
+      stroke-width: 1.5px !important;
+    }
   }
 }
 </style>
