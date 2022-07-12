@@ -3,94 +3,63 @@ import "@antv/x6-vue-shape";
 import Test from "./Test.vue";
 import DagNode from "./DagNode.vue";
 
-let portsGroup = ["top","bottom","left","right"].reduce((caculate, item)=>{
-  caculate.groups[item] = {
-    position: item,
-    attrs: {
-      circle: {
-        r: 4,
-        magnet: true,
-        stroke: "#C2C8D5",
-        strokeWidth: 1,
-        fill: "#fff",
-      },
-    },
-  }
-  return caculate
-}, {groups: {}})
-
-portsGroup = {
+// port 定义
+let portsGroup = {
   groups: {
     group1: {
       attrs: {
         circle: {
-          r: 6,
+          r: 5,
           magnet: true,
-          stroke: '#C2C8D5',
+          stroke: "#C2C8D5",
           strokeWidth: 1,
-          fill: '#fff',
-        }
+          fill: "#fff",
+        },
       },
       position: {
-        name: 'right'
+        name: "right",
       },
     },
   },
   items: [
     {
-      id: 'port1',
-      group: 'group1',
+      id: "port1",
+      group: "group1",
       args: {
-        dx: -20
+        dx: -20,
       },
       markup: [
         {
-          tagName: 'g',
-          selector: 'body',
+          tagName: "g",
+          selector: "body",
           children: [
             {
-              tagName: 'circle',
-              selector: 'circle-outer'
+              tagName: "circle",
+              selector: "circle-outer",
             },
             {
-              tagName: 'text',
-              selector: 'plus-text'
+              tagName: "circle",
+              selector: "plus-text",
             },
-            // {
-            //   tagName: 'circle',
-            //   selector: 'circle-inner'
-            // }
-          ]
-        }
+          ],
+        },
       ],
       attrs: {
         body: {
-          magnet: true
+          magnet: false,
         },
-        'plus-text': {
-          fontSize: 12,
-          fill: '#C2C8D5',
-          text: '+',
-          textAnchor: 'middle',
-          x: 0,
-          y: 3
+        "circle-outer": {
+          r: 8,
         },
-        'circle-outer': {
-          stroke: '#C2C8D5',
-          strokeWidth: 1,
-          r: 6,
-          fill: '#FFFFFF'
+        "plus-text": {
+          fill: "#C2C8D5",
         },
-        // 'circle-inner': {
-        //   r: 4,
-        //   fill: 'transparent'
-        // }
       },
     },
   ],
-}
+};
 
-
+// nodes 定义
 const shapeGroups = [
   {
     name: "group1",
@@ -110,28 +79,10 @@ const shapeGroups = [
           template: `<dag-node />`,
           components: {
             DagNode,
-          }
+          },
         },
         width: 180,
         height: 36,
-        // ports: [
-        //   {
-        //     id: 'port1',
-        //     group: 'top',
-        //   },
-        //   {
-        //     id: 'port2',
-        //     group: 'bottom',
-        //   },
-        //   {
-        //     id: 'port3',
-        //     group: 'bottom',
-        //   },
-        //   {
-        //     id: 'port4',
-        //     group: 'right',
-        //   }
-        // ]
       },
       {
         name: "dag-test1",
@@ -142,7 +93,7 @@ const shapeGroups = [
             Test,
           },
         },
-      }
+      },
     ],
   },
   {
