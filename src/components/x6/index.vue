@@ -23,24 +23,25 @@ export default {
   },
   mounted() {
     // 注册连接器
-    Graph.registerConnector(
-      'algo-connector',
-      (s, e) => {
-        const offset = 4
-        const deltaY = Math.abs(e.y - s.y)
-        const control = Math.floor((deltaY / 3) * 2)
-        const v1 = { x: s.x, y: s.y + offset + control }
-        const v2 = { x: e.x, y: e.y - offset - control }
-        return Path.normalize(
-          `M ${s.x} ${s.y}
-          L ${s.x} ${s.y + offset}
-          C ${v1.x} ${v1.y} ${v2.x} ${v2.y} ${e.x} ${e.y - offset}
-          L ${e.x} ${e.y}
-          `,
-        )
-      },
-      true,
-    )
+    // Graph.registerConnector(
+    //   'algo-connector',
+    //   (s, e) => {
+    //     const offset = 4
+    //     const deltaY = Math.abs(e.y - s.y)
+    //     const control = Math.floor((deltaY / 3) * 2)
+    //     const v1 = { x: s.x, y: s.y + offset + control }
+    //     const v2 = { x: e.x, y: e.y - offset - control }
+    //     return Path.normalize(
+    //       `M ${s.x} ${s.y}
+    //       L ${s.x} ${s.y + offset}
+    //       C ${v1.x} ${v1.y} ${v2.x} ${v2.y} ${e.x} ${e.y - offset}
+    //       L ${e.x} ${e.y}
+    //       `,
+    //     )
+    //   },
+    //   true,
+    // )
+
     // 注册边线
     Graph.registerEdge(
       'dag-edge',
@@ -48,7 +49,7 @@ export default {
         inherit: 'edge',
         attrs: {
           line: {
-            stroke: '#C2C8D5',
+            stroke: '#b2b7c3',
             strokeWidth: 1,
             targetMarker: null,
           },
@@ -73,7 +74,7 @@ export default {
             thickness: 1,
           },
           {
-            color: '#CBCED3',
+            color: '#dce0e5',//'#CBCED3',
             thickness: 1,
             factor: 5,
           },
@@ -110,12 +111,13 @@ export default {
         allowBlank: false,
         allowLoop: false,
         highlight: true,
-        connector: 'algo-connector',
+        connector: 'rounded',  // 'algo-connector'自定义
         connectionPoint: 'anchor',
         anchor: 'center',
-        validateMagnet({ magnet }) {
-          return magnet.getAttribute('port-group') !== 'top'
-        },
+        router: 'manhattan',
+        // validateMagnet({ magnet }) {
+        //   return magnet.getAttribute('port-group') !== 'top'
+        // },
         createEdge: () => {
           return this.graph.createEdge({
             shape: 'dag-edge',
@@ -190,7 +192,9 @@ export default {
   methods: {
     initData() {
       let aa = [{ "shape": "dag-edge", "id": "3a58cb37-d859-4571-ad80-d53ef78a81a6", "zIndex": -1, "source": { "cell": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "port": "port2" }, "target": { "cell": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "port": "port1" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "d3c38593-9cd4-4f52-98b3-5b1a2d64dee7", "zIndex": -1, "source": { "cell": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "port": "port3" }, "target": { "cell": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "port": "port1" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "c3e64495-eaae-469e-94e9-72ac01765156", "zIndex": -1, "source": { "cell": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "port": "port4" }, "target": { "cell": "663488cd-62b5-4903-8f26-4c5e85125a2b", "port": "port4" } }, { "shape": "dag-edge", "attrs": { "line": { "strokeDasharray": "5 5" } }, "id": "8eef043d-41c5-4311-a7c9-d7ac056f12dc", "zIndex": -1, "source": { "cell": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "port": "port3" }, "target": { "cell": "663488cd-62b5-4903-8f26-4c5e85125a2b", "port": "port1" } }, { "x": 300, "y": 120, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "ca9f4d32-a4e3-4a1a-9dee-37db2a3d9bfa", "data": { "aa": 22 }, "zIndex": 1 }, { "x": 110, "y": 260, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "f79f2ec1-336b-4d11-b018-221cbd4cdac2", "data": { "aa": 22 }, "zIndex": 2 }, { "x": 450, "y": 200, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "8c9891e2-17d9-4467-bdcc-d57fcc20f11a", "data": { "aa": 22 }, "zIndex": 3 }, { "x": 330, "y": 420, "width": 180, "height": 36, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "663488cd-62b5-4903-8f26-4c5e85125a2b", "data": { "aa": 22 }, "zIndex": 4 }]
-      aa = [{ "shape": "dag-edge", "id": "dc4d0d20-9d11-48ed-9833-c5b84e3390bd", "zIndex": -1, "source": { "cell": "60ddeed0-3d3e-47b5-8f85-87e4bb5d8a87", "port": "port2" }, "target": { "cell": "23ccb0da-05a1-4be4-8d4a-d62232aa10c2", "port": "port1" } }, { "x": 250, "y": 180, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "60ddeed0-3d3e-47b5-8f85-87e4bb5d8a87", "data": { "aa": 22 }, "zIndex": 1 }, { "x": 110, "y": 320, "shape": "dag-node", "ports": [{ "id": "port1", "group": "top" }, { "id": "port2", "group": "bottom" }, { "id": "port3", "group": "bottom" }, { "id": "port4", "group": "right" }], "id": "23ccb0da-05a1-4be4-8d4a-d62232aa10c2", "data": { "aa": 22 }, "zIndex": 2 }]
+      aa = [{ "shape": "dag-edge", "id": "dc4d0d20-9d11-48ed-9833-c5b84e3390bd", "zIndex": -1, "source": { "cell": "60ddeed0-3d3e-47b5-8f85-87e4bb5d8a87" }, "target": { "cell": "23ccb0da-05a1-4be4-8d4a-d62232aa10c2" } }, { "x": 250, "y": 180, "shape": "dag-node", "id": "23ccb0da-05a1-4be4-8d4a-d62232aa10c2", "data": { "aa": 22 }, "zIndex": 2 }]
+      aa = [{ "shape": "dag-edge", "id": "d7b48a0c-25ca-4016-ac06-d25691d4b14c", "zIndex": -1, "source": { "cell": "9a714ef1-a49d-417e-8f7a-69be151d2004" }, "target": { "cell": "7c5031f9-ed4a-46fa-8bf2-dbbc590d017b" } }, { "x": 250, "y": 190, "shape": "dag-node", "id": "9a714ef1-a49d-417e-8f7a-69be151d2004", "data": { "aa": 22 }, "zIndex": 1 }, { "x": 130, "y": 320, "shape": "dag-node", "id": "7c5031f9-ed4a-46fa-8bf2-dbbc590d017b", "data": { "aa": 22 }, "zIndex": 2 }]
+
 
       const cells = []
       aa.forEach((item) => {
@@ -211,7 +215,7 @@ export default {
             ...item.position,
             // ...item.size,
             shape: item.shape,
-            ports: item.ports.items,
+            // ports: item.ports.items,
             id: item.id,
             data: item.data,
             zIndex: item.zIndex

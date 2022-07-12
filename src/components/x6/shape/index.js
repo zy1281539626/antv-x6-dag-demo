@@ -3,7 +3,7 @@ import "@antv/x6-vue-shape";
 import Test from "./Test.vue";
 import DagNode from "./DagNode.vue";
 
-const portsGroup = ["top","bottom","left","right"].reduce((caculate, item)=>{
+let portsGroup = ["top","bottom","left","right"].reduce((caculate, item)=>{
   caculate.groups[item] = {
     position: item,
     attrs: {
@@ -18,6 +18,77 @@ const portsGroup = ["top","bottom","left","right"].reduce((caculate, item)=>{
   }
   return caculate
 }, {groups: {}})
+
+portsGroup = {
+  groups: {
+    group1: {
+      attrs: {
+        circle: {
+          r: 6,
+          magnet: true,
+          stroke: '#C2C8D5',
+          strokeWidth: 1,
+          fill: '#fff',
+        }
+      },
+      position: {
+        name: 'right'
+      },
+    },
+  },
+  items: [
+    {
+      id: 'port1',
+      group: 'group1',
+      args: {
+        dx: -20
+      },
+      markup: [
+        {
+          tagName: 'g',
+          selector: 'body',
+          children: [
+            {
+              tagName: 'circle',
+              selector: 'circle-outer'
+            },
+            {
+              tagName: 'text',
+              selector: 'plus-text'
+            },
+            // {
+            //   tagName: 'circle',
+            //   selector: 'circle-inner'
+            // }
+          ]
+        }
+      ],
+      attrs: {
+        body: {
+          magnet: true
+        },
+        'plus-text': {
+          fontSize: 12,
+          fill: '#C2C8D5',
+          text: '+',
+          textAnchor: 'middle',
+          x: 0,
+          y: 3
+        },
+        'circle-outer': {
+          stroke: '#C2C8D5',
+          strokeWidth: 1,
+          r: 6,
+          fill: '#FFFFFF'
+        },
+        // 'circle-inner': {
+        //   r: 4,
+        //   fill: 'transparent'
+        // }
+      },
+    },
+  ],
+}
 
 
 const shapeGroups = [
@@ -43,24 +114,24 @@ const shapeGroups = [
         },
         width: 180,
         height: 36,
-        ports: [
-          {
-            id: 'port1',
-            group: 'top',
-          },
-          {
-            id: 'port2',
-            group: 'bottom',
-          },
-          {
-            id: 'port3',
-            group: 'bottom',
-          },
-          {
-            id: 'port4',
-            group: 'right',
-          }
-        ]
+        // ports: [
+        //   {
+        //     id: 'port1',
+        //     group: 'top',
+        //   },
+        //   {
+        //     id: 'port2',
+        //     group: 'bottom',
+        //   },
+        //   {
+        //     id: 'port3',
+        //     group: 'bottom',
+        //   },
+        //   {
+        //     id: 'port4',
+        //     group: 'right',
+        //   }
+        // ]
       },
       {
         name: "dag-test1",
@@ -71,17 +142,7 @@ const shapeGroups = [
             Test,
           },
         },
-      },
-      {
-        name: "dag-test2",
-        group: "group1",
-        node: {
-          template: `<Test />`,
-          components: {
-            Test,
-          },
-        },
-      },
+      }
     ],
   },
   {
