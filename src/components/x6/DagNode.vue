@@ -1,8 +1,8 @@
 <template>
   <div class="node" :class="status">
-    <img :src="imgCot.setting" />
+    <img :src="require(imgCot['setting'] + '')" />
     <span class="label">{{ label }}</span>
-    <img class="status-img" v-if="!!status" :src="imgCot[status]" />
+    <img class="status-img" v-if="!!status" :src="require(imgCot[status] + '')" />
   </div>
 </template>
 
@@ -15,21 +15,16 @@ export default {
       status: "",
       label: "读数据",
       imgCot: {
-        setting:
-          "https://gw.alipayobjects.com/mdn/rms_43231b/afts/img/A*evDjT5vjkX0AAAAAAAAAAAAAARQnAQ",
-        success:
-          "https://gw.alipayobjects.com/mdn/rms_43231b/afts/img/A*6l60T6h8TTQAAAAAAAAAAAAAARQnAQ",
-        failed:
-          "https://gw.alipayobjects.com/mdn/rms_43231b/afts/img/A*SEISQ6My-HoAAAAAAAAAAAAAARQnAQ",
-        running:
-          "https://gw.alipayobjects.com/mdn/rms_43231b/afts/img/A*t8fURKfgSOgAAAAAAAAAAAAAARQnAQ",
+        setting: './assets/setting.png',
+        success: './assets/success.png',
+        failed: './assets/failed.png',
+        running: './assets/running.png',
       },
     };
   },
   mounted() {
     const self = this;
     const node = this.getNode();
-    console.log(node);
     setTimeout(() => {
       // self.status = "success";
       node.setData({ "aa": 22 })
