@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       status: "",
-      label: "读数据",
+      label: "",
       imgCot: {
         setting: './assets/setting.png',
         success: './assets/success.png',
@@ -25,11 +25,14 @@ export default {
   mounted() {
     const self = this;
     const node = this.getNode();
-    setTimeout(() => {
-      // self.status = "success";
-      node.setData({ "aa": 22 })
-    }, 1000);
-    // this.label = node.data.label;
+    // const config = node.store.data.config;
+    console.log(node);
+
+    // setTimeout(() => {
+    //   // self.status = "success";
+    //   node.setData({ "aa": 22 })
+    // }, 1000);
+    // this.label = config.title;
     node.on("change:data", ({ current }) => {
       console.log(current);
       // self.label = current.label;
