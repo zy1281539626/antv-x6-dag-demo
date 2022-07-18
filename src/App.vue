@@ -1,46 +1,46 @@
 <template>
   <div id="app">
-    <X6 :nodesData="nodesData" />
+    <X6 :nodesData="nodesData" :editable="true" />
   </div>
 </template>
 
 <script>
-import X6 from "./components/x6/index.vue"
+import X6 from "./components/x6/index.vue";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    X6
+    X6,
   },
   data() {
     return {
       nodesData: [
         {
           shape: "dag-edge",
-          id: "d7b48a0c-25ca-4016-ac06-d25691d4b14c",
+          id: "6c4d80b5-2250-499a-b2bc-e39ad310967d",
           zIndex: -1,
-          source: { cell: "9a714ef1-a49d-417e-8f7a-69be151d2004" },
-          target: { cell: "7c5031f9-ed4a-46fa-8bf2-dbbc590d017b" },
+          source: { cell: "8a0aa46b-7e6d-4807-9b09-4cbddd95e0cf" },
+          target: { cell: "35f51105-fd37-47b8-b0a4-9c1522edaca7" },
         },
         {
-          x: 250,
-          y: 190,
+          x: 70,
+          y: 200,
           shape: "dag-node",
-          id: "9a714ef1-a49d-417e-8f7a-69be151d2004",
-          data: { aa: 22 },
+          id: "8a0aa46b-7e6d-4807-9b09-4cbddd95e0cf",
+          data: { title: "Shell", icon: "powershell" },
           zIndex: 1,
         },
         {
-          x: 130,
-          y: 320,
+          x: 120,
+          y: 300,
           shape: "dag-node",
-          id: "7c5031f9-ed4a-46fa-8bf2-dbbc590d017b",
-          data: { aa: 22 },
+          id: "35f51105-fd37-47b8-b0a4-9c1522edaca7",
+          data: { title: "Sql", icon: "icon_SQL" },
           zIndex: 2,
         },
-      ]
-    }
-  }
-}
+      ],
+    };
+  },
+};
 </script>
 
 <style lang="scss">

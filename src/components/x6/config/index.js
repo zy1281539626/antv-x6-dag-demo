@@ -1,9 +1,9 @@
 import "@antv/x6-vue-shape";
-import { Graph, Addon } from "@antv/x6";
-import { nodes, edges, ports } from "./shape";
+import { Graph, Addon, Markup } from "@antv/x6";
+import { nodes, edges, port } from "./shape";
 
 // 初始化画布
-export function initGraph(container){
+export function initGraph(container, editable){
   const graph = new Graph({
     container,
     background: {
@@ -54,6 +54,11 @@ export function initGraph(container){
         },
       },
     },
+    interacting: {
+      edgeLabelMovable: false,
+      nodeMovable: !!editable,
+      magnetConnectable: !!editable
+    },
     connecting: {
       // 全局的连线规则
       snap: true,
@@ -90,23 +95,27 @@ export function initGraph(container){
       enabled: true,
       global: true,
     },
+    onPortRendered: (args) => { // 自定义port样式
+      const selectors = args.contentSelectors;
+      const container = selectors && selectors.foContent;
+      if (container) {
+        container.setAttribute('class', 'dag-node-port')
+      }
+    }
   });
   return graph;
 }
 
 // 注册自定义node、edge、port
-export function registerComponents(){
+export function registerComponents(editable){
   nodes.forEach((item) => {
     Graph.registerNode(item.name, {
       inherit: "vue-shape",
       width: item.width || 100, // 模板组件宽度
       height: item.height || 24, // 模板组件高度
       component: item.vNode,
-      ports: ports[0],
-      // propHooks(metadata) {
-      //   metadata.config = item.config
-      //   return metadata
-      // }
+      portMarkup: [Markup.getForeignObjectMarkup()],
+      ports: editable ? port : null
     });
   });
 
@@ -118,7 +127,7 @@ export function registerComponents(){
 // 初始化组件面板
 export function initStencilPanel(graph, container){
   const panelWidth = 250; // 模板画布宽度
-  const rowHeight = 40; // 每行的行高
+  const rowHeight = 45; // 每行的行高
   const paddingY = 15;  // y轴偏移量（边距）
   const layoutOptions = {
     columns: 1,  // 单列
@@ -132,9 +141,9 @@ export function initStencilPanel(graph, container){
       title: "常用组件",
       collapsable: false,
       layoutOptions,
-      nodes: [
-        { shape: "dag-node", title: "Shell", config: [] },
-        { shape: "dag-node", title: "Sql", config: [] },
+      gNodes: [
+        { shape: "dag-node", data: { title: "Shell", icon:'powershell' } },
+        { shape: "dag-node", data: { title: "Sql", icon:'icon_SQL' } },
       ]
     },
     // {
@@ -148,8 +157,8 @@ export function initStencilPanel(graph, container){
     target: graph,
     search(cell, keyword) {
       if(keyword){
-        // const searchName = cell.store.data?.config?.title?.toLowerCase()
-        // return searchName && searchName.indexOf(keyword?.toLowerCase()) !== -1
+        const searchName = cell.getData().title?.toLowerCase()
+        return searchName && searchName.indexOf(keyword?.toLowerCase()) !== -1
       }
       return true
     },
@@ -162,8 +171,8 @@ export function initStencilPanel(graph, container){
   container.appendChild(stencil.container);
 
   groups.forEach(g=>{
-    stencil.load(g.nodes, g.name)
-    stencil.resizeGroup(g.name, {height: g.nodes.length * rowHeight + paddingY * 2})
+    stencil.load(g.gNodes, g.name)
+    stencil.resizeGroup(g.name, {height: g.gNodes.length * rowHeight + paddingY * 2})
   })
 }
 

@@ -1,8 +1,12 @@
 <template>
   <div class="node" :class="status">
-    <img :src="require(imgCot['setting'] + '')" />
+    <i class="iconfont" :class="'icon-' + icon"></i>
     <span class="label">{{ label }}</span>
-    <img class="status-img" v-if="!!status" :src="require(imgCot[status] + '')" />
+    <img
+      class="status-img"
+      v-if="!!status && showStatus"
+      :src="require(imgCot[status] + '')"
+    />
   </div>
 </template>
 
@@ -14,25 +18,34 @@ export default {
     return {
       status: "",
       label: "",
+      icon: "",
       imgCot: {
-        setting: './assets/setting.png',
-        success: './assets/success.png',
-        failed: './assets/failed.png',
-        running: './assets/running.png',
+        success: "./assets/success.png",
+        failed: "./assets/failed.png",
+        running: "./assets/running.png",
       },
     };
+  },
+  computed: {
+    showStatus() {
+      // 主graph中的节点在非编辑状态才显示状态图标
+      const graphOptions = this.getGraph().options;
+      return !graphOptions.interacting?.nodeMovable;
+    },
   },
   mounted() {
     const self = this;
     const node = this.getNode();
+    // console.log(this.getGraph());
     // const config = node.store.data.config;
-    console.log(node);
+    // console.log(node);
 
     // setTimeout(() => {
     //   // self.status = "success";
     //   node.setData({ "aa": 22 })
     // }, 1000);
-    // this.label = config.title;
+    this.label = node.getData().title;
+    this.icon = node.getData().icon;
     node.on("change:data", ({ current }) => {
       console.log(current);
       // self.label = current.label;
@@ -43,6 +56,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.iconfont {
+  color: #666;
+}
+
 .node {
   display: flex;
   align-items: center;
