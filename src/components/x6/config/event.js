@@ -11,34 +11,14 @@ export function bindNodeEvent(graph){
   // 选择边线，显示颜色
   graph.on('cell:selected', ({ cell }) => {
     if (cell.isEdge()) {
-      cell.attr({
-        line: {
-          targetMarker: {
-            stroke: '#1890ff',
-            fill: '#1890ff'
-          }
-        }
-      })
+      cell.attr("line/targetMarker/stroke", "#1890ff");
+      cell.attr("line/targetMarker/fill", "#1890ff");
     }
   })
   graph.on('cell:unselected', ({ cell }) => {
     if (cell.isEdge()) {
-      cell.attr({
-        line: {
-          targetMarker: {
-            stroke: '#b2b7c3',
-            fill: '#b2b7c3'
-          }
-        }
-      })
-    }
-  })
-  // 校验两个节点只能链接一条线
-  graph.on('edge:connected', ({ isNew, edge }) => {
-    if (isNew) {
-      // 对新创建的边进行插入数据库等持久化操作
-      console.log(isNew)
-      console.log(edge)
+      cell.attr("line/targetMarker/stroke", "#b2b7c3");
+      cell.attr("line/targetMarker/fill", "#b2b7c3");
     }
   })
 }

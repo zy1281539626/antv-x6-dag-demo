@@ -4,7 +4,9 @@
       <button @click="getJSON">获取JSON数据</button>
     </div>
     <div v-if="editable" class="stencil-container" ref="stencilContainer"></div>
-    <div class="graph-container" ref="graphContainer"></div>
+    <div class="graph-container">
+      <div style="flex: 1" ref="graphContainer"></div>
+    </div>
   </div>
 </template>
 
@@ -57,7 +59,8 @@ export default {
     },
     getJSON() {
       const result = getGraphData(this.graph);
-      console.log(JSON.stringify(result));
+      // console.log(JSON.stringify(result));
+      console.log(result);
     },
   },
 };
@@ -75,7 +78,11 @@ export default {
   }
 
   .graph-container {
+    position: relative;
+    display: flex;
+    height: 100%;
     flex: 1;
+    overflow: hidden;
 
     // ::v-deep .x6-edge:hover path:nth-child(2) {
     //   stroke: #1890ff;

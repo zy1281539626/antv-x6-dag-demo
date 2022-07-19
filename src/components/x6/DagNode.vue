@@ -36,14 +36,8 @@ export default {
   mounted() {
     const self = this;
     const node = this.getNode();
-    // console.log(this.getGraph());
-    // const config = node.store.data.config;
-    // console.log(node);
 
-    // setTimeout(() => {
-    //   // self.status = "success";
-    //   node.setData({ "aa": 22 })
-    // }, 1000);
+    // node.setData({ "aa": 22 })
     this.label = node.getData().title;
     this.icon = node.getData().icon;
     node.on("change:data", ({ current }) => {

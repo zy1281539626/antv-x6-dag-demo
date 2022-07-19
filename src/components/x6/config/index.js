@@ -6,6 +6,7 @@ import { nodes, edges, port } from "./shape";
 export function initGraph(container, editable){
   const graph = new Graph({
     container,
+    autoResize: true,
     background: {
       color: "#f5f7fa",
     },
@@ -30,8 +31,6 @@ export function initGraph(container, editable){
     scroller: {
       enabled: true,
       pannable: true,
-      pageVisible: true,
-      pageBreak: false,
     },
     mousewheel: {
       // 鼠标滚轮放大缩小
@@ -72,9 +71,11 @@ export function initGraph(container, editable){
           step: 15,
         },
       },
-      // validateMagnet({ magnet }) {
-      //   return magnet.getAttribute('port-group') !== 'top'
-      // },
+      validateEdge: ({edge})=>{ // 不能有重复连线
+        const edges = graph.getEdges()
+        const count = edges.filter(e=>e.source.cell === edge.source.cell && e.target.cell === edge.target.cell).length
+        return count <= 1;
+      },
       createEdge: () => {
         return graph.createEdge({
           shape: "dag-edge",
