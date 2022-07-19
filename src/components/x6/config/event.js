@@ -21,6 +21,28 @@ export function bindNodeEvent(graph){
       cell.attr("line/targetMarker/fill", "#b2b7c3");
     }
   })
+
+  // 运行时边线动画
+  graph.on('edge:connected', ({ edge }) => {
+    edge.attr({
+      line: {
+        strokeDasharray: '',
+      },
+    })
+  })
+  graph.on('node:change:data', ({ node }) => {
+    const edges = graph.getIncomingEdges(node)
+    const { status } = node.getData()
+    edges?.forEach((edge) => {
+      if (status === 'running') {
+        edge.attr('line/strokeDasharray', 5)
+        edge.attr('line/style/animation', 'running-line 30s infinite linear')
+      } else {
+        edge.attr('line/strokeDasharray', '')
+        edge.attr('line/style/animation', '')
+      }
+    })
+  })
 }
 
 export function bindKeyEvent(graph){

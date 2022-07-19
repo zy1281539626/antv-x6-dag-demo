@@ -2,6 +2,7 @@
   <div class="x6-wrap">
     <div>
       <button @click="getJSON">获取JSON数据</button>
+      <button @click="start">开始</button>
     </div>
     <div v-if="editable" class="stencil-container" ref="stencilContainer"></div>
     <div class="graph-container">
@@ -28,6 +29,28 @@ export default {
     return {
       stencil: null,
       graph: null,
+      nodeStatusList: [
+        [
+          {
+            id: '1',
+            status: 'running',
+          },
+          {
+            id: '2',
+            status: 'default',
+          }
+        ],
+        [
+          {
+            id: '1',
+            status: 'success',
+          },
+          {
+            id: '2',
+            status: 'running',
+          }
+        ]
+      ]
     };
   },
   props: {
@@ -55,17 +78,43 @@ export default {
 
       if (this.nodesData.length > 0) {
         renderGraphData(this.graph, this.nodesData);
+        this.graph.centerContent()
       }
+    },
+    showNodeStatus(statusList){
+      const status = statusList.shift()
+      status?.forEach((item) => {
+        const { id, status } = item
+        const node = this.graph.getCellById(id)
+        const data = node.getData()
+        node.setData({
+          ...data,
+          status: status,
+        })
+      })
+      setTimeout(() => {
+        this.showNodeStatus(statusList)
+      }, 3000)
     },
     getJSON() {
       const result = getGraphData(this.graph);
       // console.log(JSON.stringify(result));
       console.log(result);
     },
+    start(){
+      this.showNodeStatus(this.nodeStatusList)
+    }
   },
 };
 </script>
 
+<style>
+@keyframes running-line {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .x6-wrap {
   display: flex;

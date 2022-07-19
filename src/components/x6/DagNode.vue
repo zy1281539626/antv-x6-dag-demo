@@ -2,11 +2,12 @@
   <div class="node" :class="status">
     <i class="iconfont" :class="'icon-' + icon"></i>
     <span class="label">{{ label }}</span>
-    <img
+    <i class="iconfont status-icon" :class="imgCot[status]"></i>
+    <!-- <img
       class="status-img"
       v-if="!!status && showStatus"
       :src="require(imgCot[status] + '')"
-    />
+    /> -->
   </div>
 </template>
 
@@ -20,9 +21,9 @@ export default {
       label: "",
       icon: "",
       imgCot: {
-        success: "./assets/success.png",
-        failed: "./assets/failed.png",
-        running: "./assets/running.png",
+        success: "icon-Success-Small",
+        failed: "icon-shibai",
+        running: "icon-running",
       },
     };
   },
@@ -41,9 +42,8 @@ export default {
     this.label = node.getData().title;
     this.icon = node.getData().icon;
     node.on("change:data", ({ current }) => {
-      console.log(current);
-      // self.label = current.label;
-      // self.status = current.status;
+      // console.log(current);
+      self.status = current.status;
     });
   },
 };
@@ -81,14 +81,21 @@ export default {
 
   &.success {
     border-left: 4px solid #52c41a;
+    .status-icon {
+      color: #52c41a;
+    }
   }
 
   &.failed {
     border-left: 4px solid #ff4d4f;
+    .status-icon {
+      color: #ff4d4f;
+    }
   }
 
-  &.running .status-img {
+  &.running .status-icon {
     animation: spin 1s linear infinite;
+    font-size: 20px;
   }
 }
 
