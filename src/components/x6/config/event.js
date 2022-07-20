@@ -8,7 +8,7 @@ export function bindNodeEvent(graph){
       edge.setTarget(targetNode);
     }
   });
-  // 选择边线，显示颜色
+  // 选择边线，显示箭头颜色
   graph.on('cell:selected', ({ cell }) => {
     if (cell.isEdge()) {
       cell.attr("line/targetMarker/stroke", "#1890ff");

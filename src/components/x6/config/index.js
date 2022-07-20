@@ -146,12 +146,7 @@ export function initStencilPanel(graph, container){
         { shape: "dag-node", data: { title: "Shell", icon:'powershell' } },
         { shape: "dag-node", data: { title: "Sql", icon:'icon_SQL' } },
       ]
-    },
-    // {
-    //   name: "group2",
-    //   title: "Group(Collapsable)",
-    //   layoutOptions
-    // }
+    }
   ]
   const stencil = new Addon.Stencil({
     title: "组件",

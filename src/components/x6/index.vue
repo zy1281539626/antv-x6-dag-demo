@@ -1,11 +1,11 @@
 <template>
-  <div class="x6-wrap">
-    <div>
+  <div class="graph-wrap">
+    <!-- <div>
       <button @click="getJSON">获取JSON数据</button>
       <button @click="start">开始</button>
-    </div>
+    </div> -->
     <div v-if="editable" class="stencil-container" ref="stencilContainer"></div>
-    <div class="graph-container">
+    <div class="graph-container" :class="{ editMode: editable }">
       <div style="flex: 1" ref="graphContainer"></div>
     </div>
   </div>
@@ -32,25 +32,25 @@ export default {
       nodeStatusList: [
         [
           {
-            id: '1',
-            status: 'running',
+            id: "1",
+            status: "running",
           },
           {
-            id: '2',
-            status: 'default',
-          }
+            id: "2",
+            status: "default",
+          },
         ],
         [
           {
-            id: '1',
-            status: 'success',
+            id: "1",
+            status: "success",
           },
           {
-            id: '2',
-            status: 'running',
-          }
-        ]
-      ]
+            id: "2",
+            status: "running",
+          },
+        ],
+      ],
     };
   },
   props: {
@@ -78,32 +78,37 @@ export default {
 
       if (this.nodesData.length > 0) {
         renderGraphData(this.graph, this.nodesData);
-        this.graph.centerContent()
+        this.graph.centerContent();
       }
     },
-    showNodeStatus(statusList){
-      const status = statusList.shift()
+    showNodeStatus(statusList) {
+      const status = statusList.shift();
       status?.forEach((item) => {
-        const { id, status } = item
-        const node = this.graph.getCellById(id)
-        const data = node.getData()
+        const { id, status } = item;
+        const node = this.graph.getCellById(id);
+        const data = node.getData();
         node.setData({
           ...data,
           status: status,
-        })
-      })
+        });
+      });
       setTimeout(() => {
-        this.showNodeStatus(statusList)
-      }, 3000)
+        this.showNodeStatus(statusList);
+      }, 3000);
     },
     getJSON() {
       const result = getGraphData(this.graph);
       // console.log(JSON.stringify(result));
       console.log(result);
+      return result;
     },
-    start(){
-      this.showNodeStatus(this.nodeStatusList)
-    }
+    start() {
+      if (!this.editable) {
+        this.showNodeStatus(this.nodeStatusList);
+      } else {
+        alert("编辑模式不能运行");
+      }
+    },
   },
 };
 </script>
@@ -116,14 +121,21 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.x6-wrap {
+.graph-wrap {
+  position: relative;
   display: flex;
-  height: 100vh;
-
+  height: 100%;
+  overflow: hidden;
   .stencil-container {
-    position: relative;
+    position: absolute;
     width: 250px;
-    flex-shrink: 0;
+    height: 100%;
+    box-shadow: 0 0 12px #c1c1c1;
+    z-index: 1;
+
+    ::v-deep .x6-widget-stencil {
+      background: #f8f8f8;
+    }
   }
 
   .graph-container {
@@ -132,6 +144,10 @@ export default {
     height: 100%;
     flex: 1;
     overflow: hidden;
+
+    &.editMode {
+      margin-left: 250px;
+    }
 
     // ::v-deep .x6-edge:hover path:nth-child(2) {
     //   stroke: #1890ff;

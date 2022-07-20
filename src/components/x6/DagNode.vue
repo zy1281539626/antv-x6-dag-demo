@@ -3,11 +3,6 @@
     <i class="iconfont" :class="'icon-' + icon"></i>
     <span class="label">{{ label }}</span>
     <i class="iconfont status-icon" :class="imgCot[status]"></i>
-    <!-- <img
-      class="status-img"
-      v-if="!!status && showStatus"
-      :src="require(imgCot[status] + '')"
-    /> -->
   </div>
 </template>
 
@@ -42,7 +37,6 @@ export default {
     this.label = node.getData().title;
     this.icon = node.getData().icon;
     node.on("change:data", ({ current }) => {
-      // console.log(current);
       self.status = current.status;
     });
   },

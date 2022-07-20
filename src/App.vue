@@ -1,6 +1,12 @@
 <template>
   <div id="app">
-    <X6 :nodesData="nodesData" :editable="false" />
+    <div>
+      <button @click="getJSON">获取JSON数据</button>
+      <button @click="start">开始</button>
+    </div>
+    <div class="x6-wrap">
+      <X6 ref="graphRef" :nodesData="nodesData" :editable="false" />
+    </div>
   </div>
 </template>
 
@@ -40,6 +46,22 @@ export default {
       ],
     };
   },
+  methods: {
+    getJSON() {
+      this.$refs.graphRef.getJSON();
+      // const result = getGraphData(this.graph);
+      // // console.log(JSON.stringify(result));
+      // console.log(result);
+    },
+    start() {
+      this.$refs.graphRef.start();
+      // if (!this.editable) {
+      //   this.showNodeStatus(this.nodeStatusList);
+      // } else {
+      //   alert("编辑模式不能运行");
+      // }
+    },
+  },
 };
 </script>
 
@@ -47,5 +69,11 @@ export default {
 * {
   margin: 0;
   padding: 0;
+}
+.x6-wrap {
+  width: 80%;
+  height: 600px;
+  margin: 100px auto;
+  border: 1px solid red;
 }
 </style>
