@@ -17,21 +17,9 @@
       size="50%"
       ref="drawer"
       >
-      <div class="drawer__content">
-        <el-form :model="schemasData">
-          <el-row v-for="(item, index) in commonData" :key="index">
-            <el-form-item
-              :label="item.label"
-              :label-width="formLabelWidth">
-              <component :is="'el-' + item.component"  v-model="schemasData[item.prop]"></component>
-            </el-form-item>
-          </el-row>
-        </el-form>
-        <div class="drawer__footer">
-          <el-button @click="cancelForm">取 消</el-button>
-          <el-button type="primary" @click="handleClose" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
-        </div>
-      </div>
+      <base-form :schemasDataAll="schemas" :cellDialog.sync="cellDialog" :action="true">
+        <template #times>（次）</template>
+      </base-form>
     </el-drawer>
   </div>
 </template>
@@ -46,11 +34,14 @@ import {
 } from "./config/index";
 import { bindKeyEvent, bindNodeEvent } from "./config/event";
 import dataSetCell from "@/mock/index"
-
+import BaseForm from '@/components/form/index.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
   name: "x6",
+  components: {
+    BaseForm
+  },
   data() {
     return {
       stencil: null,
@@ -78,11 +69,7 @@ export default {
         ],
       ],
       cellDialog: false,
-      loading: false,
-      form: {},
-      formLabelWidth: '80px',
-      commonData: [],
-      schemasData: {}
+      schemas: {}
     };
   },
   props: {
@@ -97,13 +84,7 @@ export default {
   },
   mounted() {
     this.initGraph();
-    const schemas = Object.assign([], dataSetCell)
-    this.commonData = schemas?.commonData
-    this.schemasData = schemas?.commonData.reduce((pre, cur) => {
-      pre[cur.prop] = cur.value
-      return pre
-    }, {})
-    console.log(this.schemasData)
+    this.schemas = Object.assign({}, dataSetCell)
   },
   methods: {
     initGraph() {
@@ -148,28 +129,9 @@ export default {
         alert("编辑模式不能运行");
       }
     },
-    handleClose(done) {
-      if (this.loading) {
-        return;
-      }
-      this.$confirm('确定要提交表单吗？')
-        .then(_ => {
-          this.loading = true;
-          this.timer = setTimeout(() => {
-            // 动画关闭需要一定的时间
-            setTimeout(() => {
-              this.loading = false;
-              this.cellDialog = false
-            }, 400);
-          }, 2000);
-        })
-        .catch(_ => {});
-    },
     cancelForm() {
-      this.loading = false;
       this.cellDialog = false;
-      clearTimeout(this.timer);
-    }
+    },
   },
 };
 </script>
@@ -241,11 +203,5 @@ export default {
       }
     }
   }
-}
-.drawer__content {
-  padding: 0px 20px;
-}
-.drawer__footer {
-  text-align: center;
 }
 </style>
