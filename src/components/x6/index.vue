@@ -84,7 +84,21 @@ export default {
   },
   mounted() {
     this.initGraph();
-    this.schemas = Object.assign({}, dataSetCell)
+    this.schemas = JSON.parse(JSON.stringify(dataSetCell))
+    this.schemas?.commonData.map((item, index) => {
+      if(item.prop === 'timeWarn') {
+        this.$set(item, 'events', {
+          change: function handleToggleShow(val) {
+            this.schemas?.commonData.map((item, index) => {
+            if(item.prop === 'timeout') {
+              this.$set(this.schemas?.commonData[index], 'show', val)
+              console.log(this.schemas?.commonData[index])
+            }
+          })
+          }
+        })
+      }
+    })
   },
   methods: {
     initGraph() {

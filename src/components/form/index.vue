@@ -4,12 +4,14 @@
       <el-row v-for="(item, index) in commonData" :key="index">
         <el-form-item
           :label="item.label"
+          v-if="item.show === undefined ? true : item.show"
           :label-width="formLabelWidth">
           <component
             :is="'el-' + item.component"
             v-model="schemasData[item.prop]"
             v-bind="item.attrs"
-            v-on="item.events || {}">
+            v-on="item.events || {}"
+            >
             <template v-if="item.children && item.children.length">
               <template
                 v-if="
@@ -63,32 +65,48 @@ export default {
       default: false
     }
   },
+  watch: {
+    // schemasData(val) {
+    //   this.$set(this.schemasData, 'show', val)
+    //   this.commonData.map((item, index) => {
+    //     if(item.prop === 'timeout') {
+    //       this.$set(this.commonData[index], 'show', val)
+    //       console.log(this.commonData[index])
+    //     }
+    //   })
+    // }
+  },
   data() {
     return {
       formLabelWidth: '100px',
       commonData: [],
-      schemasData: {},
+      schemasData: {
+        show: true
+      },
       loading: false,
-      timer: null
+      timer: null,
+      dataShow: true
     }
   },
   mounted() {
-    const schemas = Object.assign({}, this.schemasDataAll)
-    this.commonData = schemas?.commonData
-    for(let i = 0; i < schemas['Shell'].length; i++) {
-      this.commonData.push(schemas['Shell'][i])
-    }
-    this.schemasData = this.commonData.reduce((pre, cur) => {
-      pre[cur.prop] = cur.value
-      return pre
-    }, {})
+    this.initSchemas()
   },
   methods: {
+    initSchemas() {
+      const schemas = JSON.parse(JSON.stringify(this.schemasDataAll))
+      this.commonData = schemas?.commonData
+      for(let i = 0; i < schemas['Shell'].length; i++) {
+        this.commonData.push(schemas['Shell'][i])
+      }
+      this.schemasData = this.commonData.reduce((pre, cur) => {
+        pre[cur.prop] = cur.value
+        return pre
+      }, {})
+    },
     handleClose(done) {
       if (this.loading) {
         return;
       }
-      console.log(this.schemasData)
       this.$confirm('确定要提交表单吗？')
         .then(_ => {
           this.loading = true;

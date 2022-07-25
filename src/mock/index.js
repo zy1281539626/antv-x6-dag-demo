@@ -1,12 +1,35 @@
 import Vue from 'vue'
+const warnShow = {
+  label: '超时策略',
+  prop: 'timeout',
+  component: 'checkbox-group',
+  value: ['timeoutwarn'],
+  show: false,
+  children: [
+    {
+      component: 'checkbox',
+      label: '超时告警',
+      prop: 'timeoutwarn',
+      value: 'timeoutwarn'
+    },
+    {
+      component: 'checkbox',
+      label: '超时失败',
+      prop: 'timeerror',
+      value: 'timeerror'
+    }
+  ]
+}
 const dataSetCell = {
   commonData: [
-    { label: '节点名称',
+    {
+      label: '节点名称',
       prop: 'name',
       component: 'input',
       value: '111'
     },
-    { label: '运行标志',
+    {
+      label: '运行标志',
       prop: 'runMask',
       component: 'radio-group',
       value: '1',
@@ -25,7 +48,8 @@ const dataSetCell = {
         }
       ]
     },
-    { label: '描述',
+    {
+      label: '描述',
       prop: 'desc',
       component: 'input',
       value: '',
@@ -34,7 +58,8 @@ const dataSetCell = {
         placeholder: 'textareaContent'
       }
     },
-    { label: '任务优先级',
+    {
+      label: '任务优先级',
       prop: 'task',
       component: 'select',
       value: 'medium',
@@ -59,7 +84,8 @@ const dataSetCell = {
         }
       ]
     },
-    { label: '失败重试次数',
+    {
+      label: '失败重试次数',
       prop: 'errorTimes',
       component: 'input-number',
       value: 0,
@@ -68,16 +94,15 @@ const dataSetCell = {
       },
       itemSlot: 'times',
     },
-    { label: '超时告警',
+    {
+      label: '超时告警',
       prop: 'timeWarn',
       component: 'switch',
-      value: false,
-      events: {
-        change: function handleToggleShow(val) {
-          val === true ? console.log(111) : console.log(222)
-        }
-      }
+      value: false
     },
+    {
+      ...warnShow
+    }
   ],
   Shell: [
     { label: 'test名称', prop: 'testname', component: 'input', value: '222' }
