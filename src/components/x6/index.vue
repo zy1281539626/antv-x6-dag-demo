@@ -84,21 +84,7 @@ export default {
   },
   mounted() {
     this.initGraph();
-    this.schemas = JSON.parse(JSON.stringify(dataSetCell))
-    this.schemas?.commonData.map((item, index) => {
-      if(item.prop === 'timeWarn') {
-        this.$set(item, 'events', {
-          change: function handleToggleShow(val) {
-            this.schemas?.commonData.map((item, index) => {
-            if(item.prop === 'timeout') {
-              this.$set(this.schemas?.commonData[index], 'show', val)
-              console.log(this.schemas?.commonData[index])
-            }
-          })
-          }
-        })
-      }
-    })
+    this.initFormSchemas()
   },
   methods: {
     initGraph() {
@@ -146,6 +132,26 @@ export default {
     cancelForm() {
       this.cellDialog = false;
     },
+    initFormSchemas() {
+      this.schemas = Object.assign({}, dataSetCell)
+      for(let i = 0; i < this.schemas['Shell'].length; i++) {
+        this.schemas?.commonData.push(this.schemas['Shell'][i])
+      }
+      this.schemas?.commonData.map((item, index) => {
+        if(item.prop === 'timeWarn') {
+          this.$set(this.schemas.commonData[index], 'events', {
+            change: this.handleToggleShow
+          })
+        }
+      })
+    },
+    handleToggleShow(val) {
+      this.schemas.commonData.map((item, index) => {
+        if(item.prop === 'timeout') {
+          this.$set(this.schemas?.commonData[index], 'show', val)
+        }
+      })
+    }
   },
 };
 </script>

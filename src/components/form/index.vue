@@ -65,17 +65,6 @@ export default {
       default: false
     }
   },
-  watch: {
-    // schemasData(val) {
-    //   this.$set(this.schemasData, 'show', val)
-    //   this.commonData.map((item, index) => {
-    //     if(item.prop === 'timeout') {
-    //       this.$set(this.commonData[index], 'show', val)
-    //       console.log(this.commonData[index])
-    //     }
-    //   })
-    // }
-  },
   data() {
     return {
       formLabelWidth: '100px',
@@ -93,11 +82,8 @@ export default {
   },
   methods: {
     initSchemas() {
-      const schemas = JSON.parse(JSON.stringify(this.schemasDataAll))
+      const schemas = Object.assign({}, this.schemasDataAll)
       this.commonData = schemas?.commonData
-      for(let i = 0; i < schemas['Shell'].length; i++) {
-        this.commonData.push(schemas['Shell'][i])
-      }
       this.schemasData = this.commonData.reduce((pre, cur) => {
         pre[cur.prop] = cur.value
         return pre
