@@ -8,17 +8,8 @@
     <div class="graph-container" :class="{ editMode: editable }">
       <div style="flex: 1" ref="graphContainer"></div>
     </div>
-    <div  @click="cellDialog = true">111</div>
-    <el-drawer
-      title="我嵌套了 Form !"
-      :before-close="cancelForm"
-      :visible.sync="cellDialog"
-      direction="rtl"
-      size="50%"
-      ref="drawer"
-      >
-      <base-form :schemasDataAll="schemas" :cellDialog.sync="cellDialog" :action="true">
-        <template #times>（次）</template>
+    <el-drawer title="我嵌套了 Form !" :before-close="cancelForm" :visible.sync="cellDialog" direction="rtl" size="50%" ref="drawer">
+      <base-form :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
       </base-form>
     </el-drawer>
   </div>
@@ -34,7 +25,8 @@ import {
 } from "./config/index";
 import { bindKeyEvent, bindNodeEvent } from "./config/event";
 import dataSetCell from "@/mock/index"
-import BaseForm from '@/components/form/index.vue'
+// import BaseForm from '@/components/form/index.vue'
+import BaseForm from '@/components/form/BaseForm.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
@@ -44,8 +36,23 @@ export default {
   },
   data() {
     return {
+      schemasData: {
+        name: '111',
+        runMask: 0,
+        desc: '',
+        task: 'medium',
+        workGroup: '',
+        environment: '',
+        errorTimes: 0,
+        errorGap: 0,
+        layoutTimes: 0,
+        timeWarn: false,
+        timeout: ['timeoutwarn'],
+        longTimes: 0
+      },
       stencil: null,
       graph: null,
+      drawerFormName: '',
       nodeStatusList: [
         [
           {
@@ -90,7 +97,12 @@ export default {
     initGraph() {
       this.graph = initGraph(this.$refs["graphContainer"], this.editable);
       registerComponents(this.editable);
-      bindNodeEvent(this.graph);
+      bindNodeEvent(this.graph, {
+        "node:dblclick": (title)=>{
+          this.drawerFormName = title
+          this.cellDialog = true
+        }
+      });
       bindKeyEvent(this.graph);
       if (this.editable) {
         initStencilPanel(this.graph, this.$refs["stencilContainer"]);

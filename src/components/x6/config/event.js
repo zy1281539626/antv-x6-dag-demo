@@ -1,4 +1,6 @@
-export function bindNodeEvent(graph){
+import Vue from 'vue'
+
+export function bindNodeEvent(graph, callbacks){
   // 确保连线为node，而不是port
   graph.on("edge:connected", ({ isNew, edge }) => {
     if (isNew) {
@@ -20,6 +22,12 @@ export function bindNodeEvent(graph){
       cell.attr("line/targetMarker/stroke", "#b2b7c3");
       cell.attr("line/targetMarker/fill", "#b2b7c3");
     }
+  })
+
+  graph.on('node:dblclick', ({ cell }) => {
+    console.log(cell)
+    // Vue.set("cellDialog", true)
+    callbacks["node:dblclick"](cell.data.title)
   })
 
   // 运行时边线动画
