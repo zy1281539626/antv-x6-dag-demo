@@ -48,14 +48,14 @@
       <el-row>
         <el-col :span="12" class="errorStyle">
           <el-form-item label="失败重试次数" :label-width="formLabelWidth" prop="errorTimes">
-            <el-input v-model="schemasData.errorTimes">
+            <el-input v-model.number="schemasData.errorTimes">
               <span slot="append">(次)</span>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12" class="errorStyle">
           <el-form-item label="失败重试间隔" :label-width="formLabelWidth" prop="errorGap">
-            <el-input v-model="schemasData.errorGap">
+            <el-input v-model.number="schemasData.errorGap">
               <span slot="append">(分)</span>
             </el-input>
           </el-form-item>
@@ -64,7 +64,7 @@
       <el-row>
         <el-col :span="12" class="errorStyle">
           <el-form-item label="延时执行时间" :label-width="formLabelWidth" prop="layoutTimes">
-            <el-input v-model="schemasData.layoutTimes">
+            <el-input v-model.number="schemasData.layoutTimes">
               <span slot="append">(分)</span>
             </el-input>
           </el-form-item>
@@ -87,8 +87,8 @@
       </el-row>
       <el-row v-if="schemasData.timeWarn">
         <el-col>
-          <el-form-item label=" 超时时长" prop="longTimes">
-            <el-input v-model="schemasData.longTimes">
+          <el-form-item label=" 超时时长" prop="longTimes" :label-width="formLabelWidth">
+            <el-input v-model.number="schemasData.longTimes">
               <span slot="append">分</span>
             </el-input>
           </el-form-item>
@@ -113,11 +113,6 @@ export default {
     }
   },
   data () {
-    var validateNum = (rule, value, callback) => {
-      if (!Number.isInteger(value)) {
-        callback(new Error('请输入数字值'));
-      }
-    }
     return {
       formLabelWidth: '100px',
       task: [
@@ -137,16 +132,15 @@ export default {
       ],
       schemasData: {},
       rules: {
-        layoutTimes: [{ validator: validateNum, trigger: 'blur' }],
-        errorTimes: [{ validator: validateNum, trigger: 'blur' }],
-        longTimes: [{ validator: validateNum, trigger: 'blur' }],
-        errorGap: [{ validator: validateNum, trigger: 'blur' }],
+        layoutTimes: [{ type: 'number', message: '请输入数字', trigger: 'blur' }],
+        errorTimes: [{ type: 'number', message: '请输入数字', trigger: 'blur' }],
+        longTimes: [{ type: 'number', message: '请输入数字', trigger: 'blur' }],
+        errorGap: [{ type: 'number', message: '请输入数字', trigger: 'blur' }],
       }
     }
   },
   mounted () {
     this.schemasData = Object.assign({}, this.schemasDataAll)
-    // console.log(this.schemasData)
   },
   methods: {
   }

@@ -143,6 +143,7 @@ export default {
     },
     cancelForm() {
       this.cellDialog = false;
+      this.schemasData.timeWarn = false
     },
     initFormSchemas() {
       this.schemas = Object.assign({}, dataSetCell)
