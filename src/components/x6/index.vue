@@ -11,6 +11,7 @@
     <el-drawer title="我嵌套了 Form !" :before-close="cancelForm" :visible.sync="cellDialog" direction="rtl" size="50%" ref="drawer">
       <base-form :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
       </base-form>
+      <component :is="drawerFormName"></component>
     </el-drawer>
   </div>
 </template>
@@ -27,12 +28,14 @@ import { bindKeyEvent, bindNodeEvent } from "./config/event";
 import dataSetCell from "@/mock/index"
 // import BaseForm from '@/components/form/index.vue'
 import BaseForm from '@/components/form/BaseForm.vue'
+import Shell from '@/components/form/Shell.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
   name: "x6",
   components: {
-    BaseForm
+    BaseForm,
+    Shell
   },
   data() {
     return {
