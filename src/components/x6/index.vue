@@ -8,6 +8,10 @@
     <div class="graph-container" :class="{ editMode: editable }">
       <div style="flex: 1" ref="graphContainer"></div>
     </div>
+    <el-drawer title="我嵌套了 Form !" :before-close="cancelForm" :visible.sync="cellDialog" direction="rtl" size="50%" ref="drawer">
+      <base-form :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
+      </base-form>
+    </el-drawer>
   </div>
 </template>
 
@@ -20,15 +24,35 @@ import {
   getGraphData,
 } from "./config/index";
 import { bindKeyEvent, bindNodeEvent } from "./config/event";
-
+import dataSetCell from "@/mock/index"
+// import BaseForm from '@/components/form/index.vue'
+import BaseForm from '@/components/form/BaseForm.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
   name: "x6",
+  components: {
+    BaseForm
+  },
   data() {
     return {
+      schemasData: {
+        name: '111',
+        runMask: 0,
+        desc: '',
+        task: 'medium',
+        workGroup: '',
+        environment: '',
+        errorTimes: 0,
+        errorGap: 0,
+        layoutTimes: 0,
+        timeWarn: false,
+        timeout: ['timeoutwarn'],
+        longTimes: 0
+      },
       stencil: null,
       graph: null,
+      drawerFormName: '',
       nodeStatusList: [
         [
           {
@@ -51,6 +75,8 @@ export default {
           },
         ],
       ],
+      cellDialog: false,
+      schemas: {}
     };
   },
   props: {
@@ -65,12 +91,18 @@ export default {
   },
   mounted() {
     this.initGraph();
+    this.initFormSchemas()
   },
   methods: {
     initGraph() {
       this.graph = initGraph(this.$refs["graphContainer"], this.editable);
       registerComponents(this.editable);
-      bindNodeEvent(this.graph);
+      bindNodeEvent(this.graph, {
+        "node:dblclick": (title)=>{
+          this.drawerFormName = title
+          this.cellDialog = true
+        }
+      });
       bindKeyEvent(this.graph);
       if (this.editable) {
         initStencilPanel(this.graph, this.$refs["stencilContainer"]);
@@ -109,6 +141,30 @@ export default {
         alert("编辑模式不能运行");
       }
     },
+    cancelForm() {
+      this.cellDialog = false;
+      this.schemasData.timeWarn = false
+    },
+    initFormSchemas() {
+      this.schemas = Object.assign({}, dataSetCell)
+      for(let i = 0; i < this.schemas['Shell'].length; i++) {
+        this.schemas?.commonData.push(this.schemas['Shell'][i])
+      }
+      this.schemas?.commonData.map((item, index) => {
+        if(item.prop === 'timeWarn') {
+          this.$set(this.schemas.commonData[index], 'events', {
+            change: this.handleToggleShow
+          })
+        }
+      })
+    },
+    handleToggleShow(val) {
+      this.schemas.commonData.map((item, index) => {
+        if(item.prop === 'timeout') {
+          this.$set(this.schemas?.commonData[index], 'show', val)
+        }
+      })
+    }
   },
 };
 </script>
