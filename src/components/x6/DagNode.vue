@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { nodeTypes } from './config/nodes'
 export default {
   name: "dragnode",
   inject: ["getGraph", "getNode"],
@@ -22,20 +23,15 @@ export default {
       },
     };
   },
-  computed: {
-    showStatus() {
-      // 主graph中的节点在非编辑状态才显示状态图标
-      const graphOptions = this.getGraph().options;
-      return !graphOptions.interacting?.nodeMovable;
-    },
-  },
   mounted() {
     const self = this;
     const node = this.getNode();
 
     // node.setData({ "aa": 22 })
-    this.label = node.getData().title;
-    this.icon = node.getData().icon;
+    const type = node.getProp().type
+
+    this.label = nodeTypes[type].title;
+    this.icon = nodeTypes[type].icon;
     node.on("change:data", ({ current }) => {
       self.status = current.status;
     });

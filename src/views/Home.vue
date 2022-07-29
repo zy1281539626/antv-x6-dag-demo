@@ -1,11 +1,12 @@
 <template>
   <div>
     <div>
-      <button @click="getJSON">获取JSON数据</button>
-      <button @click="start">开始</button>
+      <el-button type="primary" size="small" @click="getJSON">获取JSON数据</el-button>
+      <el-button type="primary" size="small" @click="start">开始运行</el-button>
+      <el-switch v-model="editable" active-text="编辑模式" inactive-text="运行模式" style="margin-left: 20px;"></el-switch>
     </div>
     <div class="x6-wrap">
-      <X6 ref="graphRef" :nodesData="nodesData" :editable="false" />
+      <X6 ref="graphRef" :nodesData="nodesData" :editable="editable" />
     </div>
   </div>
 </template>
@@ -19,30 +20,33 @@ export default {
   },
   data() {
     return {
+      editable: true,
       nodesData: [
         {
-          shape: "dag-edge",
-          id: "3",
-          zIndex: -1,
-          source: { cell: "1" },
-          target: { cell: "2" },
+          "shape": "dag-edge",
+          "id": "3",
+          "zIndex": -1,
+          "source": { "cell": "1" },
+          "target": { "cell": "2" }
         },
         {
-          x: 70,
-          y: 200,
-          shape: "dag-node",
-          id: "1",
-          data: { title: "Shell", icon: "powershell" },
-          zIndex: 1,
+          "x": 10,
+          "y": 90,
+          "shape": "dag-node",
+          "id": "1",
+          "type": "shell",
+          "data": {},
+          "zIndex": 1
         },
         {
-          x: 120,
-          y: 300,
-          shape: "dag-node",
-          id: "2",
-          data: { title: "Sql", icon: "icon_SQL" },
-          zIndex: 2,
-        },
+          "x": 258,
+          "y": 146,
+          "shape": "dag-node",
+          "id": "2",
+          "type": "sql",
+          "data": {},
+          "zIndex": 2
+        }
       ],
     };
   },

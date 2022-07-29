@@ -5,10 +5,11 @@ import { nodes, edges, port } from "./shape";
 // 初始化画布
 export function initGraph(container, editable){
   const graph = new Graph({
+    editable,
     container,
     autoResize: true,
     background: {
-      color: "#f5f7fa",
+      color: "#f5f7fa"
     },
     grid: {
       // 网格样式
@@ -18,19 +19,19 @@ export function initGraph(container, editable){
       args: [
         {
           color: "#E7E8EA",
-          thickness: 1,
+          thickness: 1
         },
         {
           color: "#dce0e5",
           thickness: 1,
-          factor: 5,
-        },
-      ],
+          factor: 5
+        }
+      ]
     },
     snapline: true, // 对齐线
     scroller: {
       enabled: true,
-      pannable: true,
+      pannable: true
     },
     mousewheel: {
       // 鼠标滚轮放大缩小
@@ -38,7 +39,7 @@ export function initGraph(container, editable){
       modifiers: ["ctrl", "meta"],
       factor: 1.1,
       maxScale: 1.5,
-      minScale: 0.5,
+      minScale: 0.5
     },
     highlighting: {
       // 指定触发某种交互时的高亮样式
@@ -48,15 +49,19 @@ export function initGraph(container, editable){
         args: {
           attrs: {
             stroke: "#31d0c6",
-            strokeWidth: 4,
-          },
-        },
-      },
+            strokeWidth: 4
+          }
+        }
+      }
     },
     interacting: {
       edgeLabelMovable: false,
-      nodeMovable: !!editable,
-      magnetConnectable: !!editable
+      nodeMovable: (cellView) => {
+        return !!cellView.graph.options.editable
+      },
+      magnetConnectable: (cellView) => { 
+        return !!cellView.graph.options.editable
+      }
     },
     connecting: {
       // 全局的连线规则
@@ -68,20 +73,25 @@ export function initGraph(container, editable){
       router: {
         name: "manhattan",
         args: {
-          step: 15,
-        },
+          step: 15
+        }
       },
-      validateEdge: ({edge})=>{ // 不能有重复连线
+      validateEdge: ({ edge }) => {
+        // 不能有重复连线
         const edges = graph.getEdges()
-        const count = edges.filter(e=>e.source.cell === edge.source.cell && e.target.cell === edge.target.cell).length
-        return count <= 1;
+        const count = edges.filter(
+          (e) =>
+            e.source.cell === edge.source.cell &&
+            e.target.cell === edge.target.cell
+        ).length
+        return count <= 1
       },
       createEdge: () => {
         return graph.createEdge({
           shape: "dag-edge",
-          zIndex: -1,
-        });
-      },
+          zIndex: -1
+        })
+      }
     },
     selecting: {
       enabled: true,
@@ -89,26 +99,28 @@ export function initGraph(container, editable){
       rubberEdge: true, // 框选包含边线
       rubberNode: true, // 框选包含节点
       modifiers: "shift",
-      rubberband: true, // 启用框选,按'modifiers'配置
+      rubberband: true // 启用框选,按'modifiers'配置
     },
     clipboard: true, // 启用剪贴板
-    keyboard: {      // 启用键盘操作
+    keyboard: {
+      // 启用键盘操作
       enabled: true,
-      global: true,
+      global: true
     },
-    onPortRendered: (args) => { // 自定义port样式
-      const selectors = args.contentSelectors;
-      const container = selectors && selectors.foContent;
+    onPortRendered: (args) => {
+      // 自定义port样式
+      const selectors = args.contentSelectors
+      const container = selectors && selectors.foContent
       if (container) {
-        container.setAttribute('class', 'dag-node-port')
+        container.setAttribute("class", "dag-node-port")
       }
     }
-  });
+  })
   return graph;
 }
 
 // 注册自定义node、edge、port
-export function registerComponents(editable){
+export function registerComponents(editable) {
   nodes.forEach((item) => {
     Graph.registerNode(item.name, {
       inherit: "vue-shape",
@@ -117,8 +129,8 @@ export function registerComponents(editable){
       component: item.vNode,
       portMarkup: [Markup.getForeignObjectMarkup()],
       ports: editable ? port : null
-    });
-  });
+    })
+  })
 
   edges.forEach((item) => {
     Graph.registerEdge(item.name, item.edgeNode, true)
@@ -143,8 +155,16 @@ export function initStencilPanel(graph, container){
       collapsable: false,
       layoutOptions,
       gNodes: [
-        { shape: "dag-node", data: { title: "Shell", icon:'powershell' } },
-        { shape: "dag-node", data: { title: "Sql", icon:'icon_SQL' } },
+        {
+          shape: "dag-node",
+          type: "shell",
+          data: {}
+        },
+        {
+          shape: "dag-node",
+          type: "sql",
+          data: {}
+        }
       ]
     }
   ]
@@ -194,10 +214,12 @@ export function getGraphData(graph){
         ...item.position,
         shape: item.shape,
         id: item.id,
+        type: item.type,
         data: item.data,
         zIndex: item.zIndex,
       };
     } else if (item.shape === "dag-edge") {
+      delete item.attrs
       return item;
     }
   });

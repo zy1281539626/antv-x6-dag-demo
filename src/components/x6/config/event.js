@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 export function bindNodeEvent(graph, callbacks){
   // 确保连线为node，而不是port
   graph.on("edge:connected", ({ isNew, edge }) => {
@@ -25,8 +23,6 @@ export function bindNodeEvent(graph, callbacks){
   })
 
   graph.on('node:dblclick', ({ cell }) => {
-    console.log(cell)
-    // Vue.set("cellDialog", true)
     callbacks["node:dblclick"](cell.data.title)
   })
 
@@ -42,7 +38,9 @@ export function bindNodeEvent(graph, callbacks){
     const edges = graph.getIncomingEdges(node)
     const { status } = node.getData()
     edges?.forEach((edge) => {
-      if (status === 'running') {
+      const sourceNode = edge.getSourceNode();
+      const sourceStatus = sourceNode.getData().status
+      if (status === 'running' && sourceStatus === 'success') {
         edge.attr('line/strokeDasharray', 5)
         edge.attr('line/style/animation', 'running-line 30s infinite linear')
       } else {
@@ -56,6 +54,7 @@ export function bindNodeEvent(graph, callbacks){
 export function bindKeyEvent(graph){
   // 删除节点
   graph.bindKey(['delete', 'backspace'], () => {
+    if (!graph.options.editable) return;
     const cells = graph.getSelectedCells()
     if (cells.length) {
       graph.removeCells(cells)
@@ -65,6 +64,7 @@ export function bindKeyEvent(graph){
 
   // 复制
   graph.bindKey('ctrl+c', () => {
+    if (!graph.options.editable) return;
     const cells = graph.getSelectedCells()
     if (cells.length) {
       graph.copy(cells)
@@ -74,6 +74,7 @@ export function bindKeyEvent(graph){
 
   // 粘贴
   graph.bindKey('ctrl+v', () => {
+    if (!graph.options.editable) return;
     if (!graph.isClipboardEmpty()) {
       const cells = graph.paste({ offset: 32 })
       graph.cleanSelection()

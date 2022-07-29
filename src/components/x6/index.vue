@@ -1,15 +1,19 @@
 <template>
   <div class="graph-wrap">
-    <!-- <div>
-      <button @click="getJSON">获取JSON数据</button>
-      <button @click="start">开始</button>
-    </div> -->
     <div v-if="editable" class="stencil-container" ref="stencilContainer"></div>
     <div class="graph-container" :class="{ editMode: editable }">
       <div style="flex: 1" ref="graphContainer"></div>
     </div>
-    <el-drawer title="我嵌套了 Form !" :before-close="cancelForm" :visible.sync="cellDialog" direction="rtl" size="50%" ref="drawer">
-      <base-form :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
+    <el-drawer 
+      title="当前节点设置" 
+      :before-close="cancelForm" 
+      :visible.sync="cellDialog" 
+      direction="rtl" 
+      :size="650" 
+      ref="drawer"
+      :modal="false"
+    >
+      <base-form :editable="editable" :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
       </base-form>
       <component :is="drawerFormName"></component>
     </el-drawer>
@@ -96,10 +100,41 @@ export default {
     this.initGraph();
     this.initFormSchemas()
   },
+  watch: {
+    editable: {
+      handler (val) {
+        this.$nextTick(() => { 
+          // 修改编辑状态
+          this.graph.options.editable = val
+          // 显示port-编辑模式/隐藏port-运行模式
+          const ports = this.$refs.graphContainer.querySelectorAll('.x6-port-body');
+          ports.forEach(item => {
+            item.style.visibility = val ? 'visible' : 'hidden';
+          })
+          // 初始化左侧组件面板
+          if (this.editable) {
+            initStencilPanel(this.graph, this.$refs["stencilContainer"]);
+            // 编辑模式重置状态
+            this.graph.getNodes().forEach(item => {
+              const nodeData = item.getData();
+              item.setData({
+                ...nodeData,
+                status: 'default',
+              });
+            });
+          }
+          this.graph.centerContent();
+        })
+      },
+      immediate: true,
+    },
+  },
   methods: {
     initGraph() {
       this.graph = initGraph(this.$refs["graphContainer"], this.editable);
+      // 注册组件
       registerComponents(this.editable);
+      // 绑定事件
       bindNodeEvent(this.graph, {
         "node:dblclick": (title)=>{
           this.drawerFormName = title
@@ -107,10 +142,7 @@ export default {
         }
       });
       bindKeyEvent(this.graph);
-      if (this.editable) {
-        initStencilPanel(this.graph, this.$refs["stencilContainer"]);
-      }
-
+      // 渲染数据
       if (this.nodesData.length > 0) {
         renderGraphData(this.graph, this.nodesData);
         this.graph.centerContent();
@@ -128,7 +160,9 @@ export default {
         });
       });
       setTimeout(() => {
-        this.showNodeStatus(statusList);
+        if (statusList.length > 0) { 
+          this.showNodeStatus(statusList);
+        }
       }, 3000);
     },
     getJSON() {
@@ -139,9 +173,9 @@ export default {
     },
     start() {
       if (!this.editable) {
-        this.showNodeStatus(this.nodeStatusList);
+        this.showNodeStatus(JSON.parse(JSON.stringify(this.nodeStatusList)));
       } else {
-        alert("编辑模式不能运行");
+        this.$alert("编辑模式不能运行", "提示", {type:'warning'});
       }
     },
     cancelForm() {
