@@ -1,6 +1,6 @@
 <template>
   <div class="drawer__content">
-    <el-form :model="schemasData" :rules="rules">
+    <el-form :model="schemasData" :rules="rules" :disabled="!editable" size="small">
       <el-row>
         <el-form-item label="节点名称" :label-width="formLabelWidth"  prop="name">
           <el-input v-model="schemasData.name"></el-input>
@@ -102,6 +102,10 @@
 export default {
   name: 'BaseForm',
   props: {
+    editable: {
+      type: Boolean,
+      default: false,
+    },
     schemasDataAll: {
       type: Object,
       default: () => {}
