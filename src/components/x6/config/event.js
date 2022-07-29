@@ -23,7 +23,7 @@ export function bindNodeEvent(graph, callbacks){
   })
 
   graph.on('node:dblclick', ({ cell }) => {
-    callbacks["node:dblclick"](cell.data.title)
+    callbacks['node:dblclick'](cell.store.data.type);
   })
 
   // 运行时边线动画

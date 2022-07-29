@@ -1,13 +1,15 @@
+import { index } from '@antv/x6/lib/util/dom/elem';
 <template>
   <div class="drawer__content">
     <el-form :model="shellData" :rules="rules">
       <el-row>
         <el-form-item label="资源" prop="resource" :label-width="formLabelWidth">
           <el-select
-            v-model="shellData.resource"
-            value-key="id"
+            v-model="parentName"
             multiple
             clearable
+            @clear="clearAllChecked"
+            @remove-tag='clearChecked'
           >
             <el-option
               v-for="item in resource"
@@ -21,9 +23,11 @@
               ref="tree"
               :data="resource"
               show-checkbox
+              node-key="id"
+              :check-on-click-node="true"
+              default-expand-all
               :props="defaultProps"
-              :node-key="defaultProps.value"
-              @node-click="handleCheckChange"
+              @check="handleCheckChange"
             />
           </el-select>
         </el-form-item>
@@ -58,13 +62,13 @@ export default {
     return {
       formLabelWidth: '100px',
       preTask: [{
-        value: 'HTML',
+        value: '1',
         label: 'HTML'
       }, {
-        value: 'CSS',
+        value: '2',
         label: 'CSS'
       }, {
-        value: 'JavaScript',
+        value: '3',
         label: 'JavaScript'
         }],
       resource: [{
@@ -91,15 +95,67 @@ export default {
         resource: [],
         preTask: []
       },
+      parentName: [],
+      originResource: [],
       rules: {}
     }
   },
   methods: {
-    handleCheckChange (e) {
-      // console.log(e)
+    clearChecked (e) {
+      this.originResource.map((item, index) => {
+        if (item.label === e) {
+          this.shellData["resource"].splice(index, 1)
+          this.originResource.splice(index, 1)
+          this.$refs.tree.setChecked(item.id, false)
+        }
+      })
+    },
+    clearAllChecked () {
+      this.shellData["resource"] = []
+      this.originResource = []
+      this.$refs.tree.setCheckedKeys([])
+    },
+    handleCheckChange (e, checked) {
+      console.log(e, checked)
+      const checkValue = checked.checkedKeys.includes(e.id)
+      if (!checkValue) {
+        if (checked.checkedKeys.length === 0) {
+          this.shellData["resource"] = []
+          this.originResource = []
+          this.parentName = []
+        } else {
+          if (this.shellData["resource"].length > 0) {
+            const index = this.shellData["resource"].findIndex(item => item === e.id)
+            this.shellData["resource"].splice(index, 1)
+            this.parentName.splice(index, 1)
+            this.originResource.splice(index, 1)
+          }
+        }
+      } else {
+        this.handleNodeClick(e)
+      }
+    },
+    handleNodeClick (e) {
       const list = this.getTreeName(this.resource, e.id)
-      // console.log(list)
-      this.shellData["resource"].push(list)
+      const resourceLen = this.shellData["resource"].length > 0 ? this.shellData["resource"] : false
+      if (resourceLen) {
+        for (let i = 0; i < resourceLen.length; i++) {
+          const item = resourceLen[i]
+          if (item === e.id) {
+            return
+          } else {
+            if (i === (resourceLen.length - 1)) {
+              this.shellData["resource"].push(list.id)
+              this.parentName.push(list.label)
+              this.originResource.push(list)
+            }
+          }
+        }
+      } else {
+        this.shellData["resource"].push(list.id)
+        this.parentName.push(list.label)
+        this.originResource.push(list)
+      }
     },
     getTreeName(list, id) {
       if (list?.length) {

@@ -32,14 +32,14 @@ import { bindKeyEvent, bindNodeEvent } from "./config/event";
 import dataSetCell from "@/mock/index"
 // import BaseForm from '@/components/form/index.vue'
 import BaseForm from '@/components/form/BaseForm.vue'
-import Shell from '@/components/form/Shell.vue'
+import shell from '@/components/form/Shell.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
   name: "x6",
   components: {
     BaseForm,
-    Shell
+    shell
   },
   data() {
     return {
