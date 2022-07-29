@@ -15,6 +15,7 @@
     >
       <base-form :editable="editable" :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
       </base-form>
+      <component :is="drawerFormName"></component>
     </el-drawer>
   </div>
 </template>
@@ -31,12 +32,14 @@ import { bindKeyEvent, bindNodeEvent } from "./config/event";
 import dataSetCell from "@/mock/index"
 // import BaseForm from '@/components/form/index.vue'
 import BaseForm from '@/components/form/BaseForm.vue'
+import shell from '@/components/form/Shell.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
   name: "x6",
   components: {
-    BaseForm
+    BaseForm,
+    shell
   },
   data() {
     return {
