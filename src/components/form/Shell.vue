@@ -51,6 +51,9 @@ import { index } from '@antv/x6/lib/util/dom/elem';
           </el-select>
         </el-form-item>
       </el-row>
+      <el-row>
+        <el-form-item></el-form-item>
+      </el-row>
     </el-form>
   </div>
 </template>
@@ -113,51 +116,61 @@ export default {
   },
   methods: {
     clearChecked (e) {
-      this.originResource.map((item, index) => {
-        if (item.label === e) {
-          this.shellData["resource"].splice(index, 1)
-          this.originResource.splice(index, 1)
-          this.$refs.tree.setChecked(item.id, false)
-        }
-      })
+      let del = this.originResource.filter((item) => {
+        return item.label === val;
+      });
+      if (del.length > 0) {
+        this.$refs.tree.setChecked(del[0].id, false);
+      }
+      // this.originResource.map((item, index) => {
+      //   if (item.label === e) {
+      //     this.shellData["resource"].splice(index, 1)
+      //     this.originResource.splice(index, 1)
+      //     this.$refs.tree.setChecked(item.id, false)
+      //   }
+      // })
     },
     clearAllChecked () {
       this.shellData["resource"] = []
       this.originResource = []
       this.$refs.tree.setCheckedKeys([])
     },
-    handleCheckChange (e, checked) {
-      const _this = this
-      const checkValue = checked.checkedKeys.includes(e.id)
-      if (!checkValue) {
-        if (checked.checkedKeys.length === 0) {
-          this.shellData["resource"] = []
-          this.originResource = []
-          this.parentName = []
-        } else {
-          if (this.shellData["resource"].length > 0) {
-            const index = this.shellData["resource"].findIndex(item => item === e.id)
-            this.shellData["resource"].splice(index, 1)
-            this.parentName.splice(index, 1)
-            this.originResource.splice(index, 1)
-          }
-        }
-      } else {
-        if (e.children === undefined) {
-          _this.handleNodeClick(e)
-        } else {
-          function dataFun (e) {
-            for (let i = 0; i < e.children.length; i++) {
-              if (e.children[i].children === undefined) {
-                _this.handleNodeClick(e.children[i])
-              } else {
-                dataFun(e.children[i])
-              }
-            }
-          }
-          dataFun(e)
-        }
-      }
+    handleCheckChange (node, treeData) {
+      this.originResource = treeData.checkedNodes.filter((item) => {
+        return !item.children;
+      });
+      this.parentName = this.originResource.map((data) => data.label);
+      // const _this = this
+      // const checkValue = checked.checkedKeys.includes(e.id)
+      // if (!checkValue) {
+      //   if (checked.checkedKeys.length === 0) {
+      //     this.shellData["resource"] = []
+      //     this.originResource = []
+      //     this.parentName = []
+      //   } else {
+      //     if (this.shellData["resource"].length > 0) {
+      //       const index = this.shellData["resource"].findIndex(item => item === e.id)
+      //       this.shellData["resource"].splice(index, 1)
+      //       this.parentName.splice(index, 1)
+      //       this.originResource.splice(index, 1)
+      //     }
+      //   }
+      // } else {
+      //   if (e.children === undefined) {
+      //     _this.handleNodeClick(e)
+      //   } else {
+      //     function dataFun (e) {
+      //       for (let i = 0; i < e.children.length; i++) {
+      //         if (e.children[i].children === undefined) {
+      //           _this.handleNodeClick(e.children[i])
+      //         } else {
+      //           dataFun(e.children[i])
+      //         }
+      //       }
+      //     }
+      //     dataFun(e)
+      //   }
+      // }
     },
     handleNodeClick (e) {
       const list = this.getTreeName(this.resource, e.id)
