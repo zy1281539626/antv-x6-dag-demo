@@ -5,14 +5,13 @@ import { index } from '@antv/x6/lib/util/dom/elem';
       <el-row>
         <el-form-item label="资源" prop="resource" :label-width="formLabelWidth">
           <el-select
-            v-model="parentName"
+            v-model="shellData.resource"
             multiple
             clearable
-            @clear="clearAllChecked"
-            @remove-tag='clearChecked'
+            @change="changeSelect"
           >
             <el-option
-              v-for="item in resource"
+              v-for="item in selectOptions"
               :key="item.id"
               :value="item.id"
               :label="item.label"
@@ -24,9 +23,7 @@ import { index } from '@antv/x6/lib/util/dom/elem';
               :data="resource"
               show-checkbox
               node-key="id"
-              :check-on-click-node="true"
               default-expand-all
-              :props="defaultProps"
               @check="handleCheckChange"
             />
           </el-select>
@@ -52,18 +49,22 @@ import { index } from '@antv/x6/lib/util/dom/elem';
         </el-form-item>
       </el-row>
       <el-row>
-        <el-form-item></el-form-item>
+        <el-form-item label="脚本" prop="script" :label-width="formLabelWidth">
+          <div id="container"></div> 
+        </el-form-item>
       </el-row>
     </el-form>
   </div>
 </template>
 
 <script>
+import * as monaco from 'monaco-editor'
 export default {
   name: 'Shell',
   data () {
     return {
       formLabelWidth: '100px',
+      editor:null,//文本编辑器
       preTask: [{
         value: '1',
         label: 'HTML'
@@ -100,116 +101,54 @@ export default {
           }]
         }]
       }],
-      defaultProps: {
-        children: 'children',
-        label: 'label',
-        value: 'id'
-      },
       shellData: {
         resource: [],
-        preTask: []
+        preTask: [],
+        script: null
       },
-      parentName: [],
-      originResource: [],
-      rules: {}
+      selectOptions: [{}],
+      rules: {},
+      oldValue: '',
+      isSave: true
     }
   },
+  watch: {
+    editor(val) {
+      console.log(val.getValue())
+    }
+  },
+  mounted() {
+    this.initEditor(); 
+  },
   methods: {
-    clearChecked (e) {
-      let del = this.originResource.filter((item) => {
-        return item.label === val;
+    initEditor(){
+      // 初始化编辑器，确保dom已经渲染
+      this.editor = monaco.editor.create(document.getElementById('container'), {
+        value: '',//编辑器初始显示文字
+        language:'sql',//语言支持自行查阅demo
+        automaticLayout: true,//自动布局
+        theme:'vs-dark' //官方自带三种主题vs, hc-black, or vs-dark
       });
-      if (del.length > 0) {
-        this.$refs.tree.setChecked(del[0].id, false);
-      }
-      // this.originResource.map((item, index) => {
-      //   if (item.label === e) {
-      //     this.shellData["resource"].splice(index, 1)
-      //     this.originResource.splice(index, 1)
-      //     this.$refs.tree.setChecked(item.id, false)
-      //   }
-      // })
-    },
-    clearAllChecked () {
-      this.shellData["resource"] = []
-      this.originResource = []
-      this.$refs.tree.setCheckedKeys([])
-    },
-    handleCheckChange (node, treeData) {
-      this.originResource = treeData.checkedNodes.filter((item) => {
-        return !item.children;
+      this.editor.onKeyUp(() => {
+        // 当键盘按下，判断当前编辑器文本与已保存的编辑器文本是否一致
+        if(this.editor.getValue() != this.oldValue){
+          this.isSave = false;
+          console.log(this.editor.getValue())
+        }
       });
-      this.parentName = this.originResource.map((data) => data.label);
-      // const _this = this
-      // const checkValue = checked.checkedKeys.includes(e.id)
-      // if (!checkValue) {
-      //   if (checked.checkedKeys.length === 0) {
-      //     this.shellData["resource"] = []
-      //     this.originResource = []
-      //     this.parentName = []
-      //   } else {
-      //     if (this.shellData["resource"].length > 0) {
-      //       const index = this.shellData["resource"].findIndex(item => item === e.id)
-      //       this.shellData["resource"].splice(index, 1)
-      //       this.parentName.splice(index, 1)
-      //       this.originResource.splice(index, 1)
-      //     }
-      //   }
-      // } else {
-      //   if (e.children === undefined) {
-      //     _this.handleNodeClick(e)
-      //   } else {
-      //     function dataFun (e) {
-      //       for (let i = 0; i < e.children.length; i++) {
-      //         if (e.children[i].children === undefined) {
-      //           _this.handleNodeClick(e.children[i])
-      //         } else {
-      //           dataFun(e.children[i])
-      //         }
-      //       }
-      //     }
-      //     dataFun(e)
-      //   }
-      // }
     },
-    handleNodeClick (e) {
-      const list = this.getTreeName(this.resource, e.id)
-      const resourceLen = this.shellData["resource"].length > 0 ? this.shellData["resource"] : false
-      if (resourceLen) {
-        for (let i = 0; i < resourceLen.length; i++) {
-          const item = resourceLen[i]
-          if (item === e.id) {
-            return
-          } else {
-            if (i === (resourceLen.length - 1)) {
-              this.shellData["resource"].push(list.id)
-              this.parentName.push(list.label)
-              this.originResource.push(list)
-            }
-          }
-        }
-      } else {
-        this.shellData["resource"].push(list.id)
-        this.parentName.push(list.label)
-        this.originResource.push(list)
-      }
+    //保存编辑器方法
+    saveEditor(){
+      this.oldValue = this.editor.getValue();
+      // ...保存逻辑
     },
-    getTreeName(list, id) {
-      if (list?.length) {
-        for (let i = 0; i < list.length; i++) {
-          const a = list[i];
-          if (a.id === id) {
-            return a;
-          } else {
-            if (a.children && a.children.length > 0) {
-              const res = this.getTreeName(a.children, id);
-              if (res) {
-                return res;
-              }
-            }
-          }
-        }
-      }
+    handleCheckChange() {
+      const checkNodes = this.$refs.tree.getCheckedNodes(true);
+      this.selectOptions = checkNodes.length > 0 ? checkNodes : [{}]
+      this.shellData.resource = this.selectOptions.filter(item => !!item.id).map((item) => item.id)
+    },
+    changeSelect(data) {
+      this.$refs.tree.setCheckedKeys(data)
     }
   }
 }
@@ -218,5 +157,8 @@ export default {
 <style lang="scss" scoped>
 .drawer__content {
   padding: 0px 20px;
+}
+#container {
+  min-height: 100px;
 }
 </style>
