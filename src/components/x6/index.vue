@@ -15,7 +15,10 @@
     >
       <base-form :editable="editable" :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
       </base-form>
-      <component :is="drawerFormName"></component>
+      <component :editable="editable" :is="drawerFormName"></component>
+      <div>
+
+      </div>
     </el-drawer>
   </div>
 </template>
