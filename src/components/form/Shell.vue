@@ -126,8 +126,12 @@ export default {
     };
   },
   watch: {
-    editor(val) {
-      console.log(val.getValue());
+    shellData: {
+      immediate: true,
+      deep: true,
+      handler (val) {
+        this.$emit('paramsCom', val)
+      }
     },
     paramsArray: {
       immediate: true,
@@ -169,6 +173,7 @@ export default {
           // 当键盘按下，判断当前编辑器文本与已保存的编辑器文本是否一致
           if (this.editor.getValue() != this.oldValue) {
               this.isSave = false;
+              this.shellData.script = this.editor.getValue()
           }
       });
     },

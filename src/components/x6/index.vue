@@ -15,9 +15,10 @@
     >
       <base-form :editable="editable" :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
       </base-form>
-      <component :editable="editable" :is="drawerFormName"></component>
+      <component :editable="editable" :is="drawerFormName" @paramsCom="getComponParam"></component>
       <div>
-
+        <el-button type="primary">提交</el-button>
+        <el-button>取消</el-button>
       </div>
     </el-drawer>
   </div>
@@ -149,6 +150,12 @@ export default {
       if (this.nodesData.length > 0) {
         renderGraphData(this.graph, this.nodesData);
         this.graph.centerContent();
+      }
+    },
+    getComponParam(val) {
+      this.schemasData = {
+        ...this.schemasData,
+        ...val
       }
     },
     showNodeStatus(statusList) {
