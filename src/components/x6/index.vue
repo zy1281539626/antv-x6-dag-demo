@@ -1,9 +1,6 @@
 <template>
   <div class="graph-wrap">
-    <div class="graph-toolbar">
-      <h3>样例3</h3>
-      <i class="el-icon-copy-document"></i>
-    </div>
+    <toolbar />
     <div class="graph-canvas">
       <div v-if="editable" class="stencil-container" ref="stencilContainer"></div>
       <div class="graph-container" :class="{ editMode: editable }">
@@ -12,7 +9,7 @@
     </div>
     <el-drawer 
       title="当前节点设置" 
-      :before-close="cancelForm" 
+      :before-close="cancelForm"
       :visible.sync="cellDialog" 
       direction="rtl" 
       :size="650" 
@@ -33,7 +30,7 @@
 </template>
 
 <script>
-import {
+import {  
   initGraph,
   registerComponents,
   initStencilPanel,
@@ -46,6 +43,7 @@ import dataSetCell from "@/mock/index"
 import BaseForm from '@/components/form/BaseForm.vue'
 import shell from '@/components/form/Shell.vue'
 import sql from '@/components/form/Sql.vue'
+import Toolbar from '@/components/x6/Toolbar.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
@@ -53,7 +51,8 @@ export default {
   components: {
     BaseForm,
     shell,
-    sql
+    sql,
+    Toolbar
   },
   data() {
     return {
@@ -97,7 +96,7 @@ export default {
         ],
       ],
       cellDialog: false,
-      schemas: {}
+      schemas: {},
     };
   },
   props: {
@@ -245,15 +244,6 @@ export default {
   background: #f2f3f7;
   padding: 10px;
   overflow: hidden;
-  .graph-toolbar {
-    width: 100%;
-    height: 50px;
-    background-color: #fff;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-  }
   .graph-canvas {
     display: flex;
     overflow: hidden;
