@@ -47,13 +47,41 @@
       direction="rtl" 
       :size="500" 
       ref="drawer">
-      <el-table :data="gridData">
-        <el-table-column property="date" label="日期" width="150"></el-table-column>
-        <el-table-column property="name" label="姓名" width="200"></el-table-column>
-        <el-table-column property="address" label="地址"></el-table-column>
+      <el-table :data="gridData.slice((queryInfo.currentPage - 1) * queryInfo.pagesize, queryInfo.currentPage * queryInfo.pagesize)">
+        <el-table-column
+          v-for="(item, index) in tableSet"
+          :key="index"
+          :prop="item.prop"
+          :label="item.label">
+        </el-table-column>
+        <el-table-column
+          label="操作">
+          <template slot-scope="scope">
+            <el-button
+              @click.native.prevent="deleteRow(scope.row, gridData)"
+              type="danger"
+              icon="el-icon-delete"
+              size="mini">
+            </el-button>
+            <el-button
+              @click.native.prevent="deleteRow(scope.row, gridData)"
+              type="primary"
+              icon="el-icon-info"
+              size="mini"> 
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="footerBtn">
         <el-button @click="versionDialog = false">取消</el-button>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          @current-change="handleCurrentPage"
+          :total="total"
+          :current-page="queryInfo.currentPage"
+          :page-size="queryInfo.pagesize">
+        </el-pagination>
       </div>
     </el-drawer>
   </div>
@@ -113,6 +141,19 @@ export default {
         rowNum: 0,
         colNum: 0
       },
+      tableSet: [{
+        label: '日历',
+        prop: 'date',
+        width: '100px'
+      }, {
+        label: '姓名',
+        prop: 'name',
+        width: '100px'
+      }, {
+        label: '地址',
+        prop: 'address',
+        width: ''
+      }],
       gridData: [{
         date: '2016-05-02',
         name: '王小虎',
@@ -130,8 +171,18 @@ export default {
         name: '王小虎',
         address: '上海市普陀区金沙江路 1518 弄'
       }],
-      versionDialog: false
+      versionDialog: false,
+      queryInfo: {
+        type: 3,
+        pagenum: 1,
+        pagesize: 1,
+        currentPage: 1
+      },
+      total: 0
     }
+  },
+  mounted() {
+    this.getListVersion()
   },
   methods: {
     changeRadioDAG () {
@@ -141,6 +192,18 @@ export default {
     onSubmitDAG () {
       this.showDAG = false
       console.log(this.formDAG)
+    },
+    deleteRow(row, table) {
+      console.log(row)
+    },
+    handleCurrentPage(val) {
+      // this.queryInfo.pagesize = val
+      this.queryInfo.currentPage = val;
+      console.log(val)
+      this.getListVersion()
+    },
+    getListVersion() {
+      this.total = this.gridData.length
     },
     clickToolBtn (id) {
       if (id === '1') {
@@ -219,9 +282,15 @@ export default {
   height: 60px;
   line-height: 60px;
   text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   padding-right: 20px;
   .el-button {
     z-index: 9;
   }
+}
+::v-deep .el-pagination {
+  margin-top: 30px;
 }
 </style>
