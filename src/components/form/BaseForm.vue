@@ -112,8 +112,12 @@ export default {
     }
   },
   watch: {
-    schemasData (val) {
-      this.$emit('update:schemasDataAll', val)
+    schemasData: {
+      immediate: true,
+      deep: true,
+      handler (val) {
+        this.$emit('update:schemasDataAll', val)
+      }
     }
   },
   data () {

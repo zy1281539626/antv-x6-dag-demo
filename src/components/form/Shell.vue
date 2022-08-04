@@ -1,18 +1,21 @@
-import { index } from '@antv/x6/lib/util/dom/elem';
 <template>
   <div class="drawer__content">
     <el-form :model="shellData" :rules="rules">
       <el-row>
+        <el-form-item label="脚本" prop="script" :label-width="formLabelWidth">
+          <div id="container"></div> 
+        </el-form-item>
+      </el-row>
+      <el-row>
         <el-form-item label="资源" prop="resource" :label-width="formLabelWidth">
           <el-select
-            v-model="parentName"
+            v-model="shellData.resource"
             multiple
             clearable
-            @clear="clearAllChecked"
-            @remove-tag='clearChecked'
+            @change="changeSelect"
           >
             <el-option
-              v-for="item in resource"
+              v-for="item in selectOptions"
               :key="item.id"
               :value="item.id"
               :label="item.label"
@@ -24,12 +27,18 @@ import { index } from '@antv/x6/lib/util/dom/elem';
               :data="resource"
               show-checkbox
               node-key="id"
-              :check-on-click-node="true"
               default-expand-all
-              :props="defaultProps"
               @check="handleCheckChange"
             />
           </el-select>
+        </el-form-item>
+      </el-row>
+      <el-row>
+        <el-form-item
+          :label="schemas['paramsLabel']"
+          :prop="schemas['params']"
+          :label-width="formLabelWidth">
+          <DynamicParams :schemasType="schemas" :paramsArray.sync="paramsArray"></DynamicParams>
         </el-form-item>
       </el-row>
       <el-row>
@@ -56,124 +65,131 @@ import { index } from '@antv/x6/lib/util/dom/elem';
 </template>
 
 <script>
+import * as monaco from 'monaco-editor'
+import dataParams from "@/mock/paramsForm";
+import DynamicParams from './component/DynamicParams.vue';
 export default {
-  name: 'Shell',
-  data () {
+  name: "Shell",
+  components: { DynamicParams },
+  data() {
     return {
-      formLabelWidth: '100px',
+      formLabelWidth: "100px",
+      editor: null,
       preTask: [{
-        value: '1',
-        label: 'HTML'
+        value: "1",
+        label: "HTML"
       }, {
-        value: '2',
-        label: 'CSS'
+        value: "2",
+        label: "CSS"
       }, {
-        value: '3',
-        label: 'JavaScript'
-        }],
+        value: "3",
+        label: "JavaScript"
+      }],
       resource: [{
         id: 1,
-        label: '一级 2',
+        label: "一级 1",
         children: [{
           id: 3,
-          label: '二级 2-1',
+          label: "二级 1-1",
           children: [{
             id: 4,
-            label: '三级 3-1-1'
-          }, {
-            id: 5,
-            label: '三级 3-1-2'
+            label: "三级 1-1-1"
+            }, {
+              id: 5,
+              label: "三级 1-1-2"
+          }]
+        }]
+      }, {
+        id: 2,
+        label: "一级 2",
+        children: [{
+          id: 6,
+          label: "二级 2-1",
+          children: [{
+            id: 7,
+            label: "三级 2-1-1"
           }]
         }]
       }],
-      defaultProps: {
-        children: 'children',
-        label: 'label',
-        value: 'id'
-      },
       shellData: {
         resource: [],
-        preTask: []
+        preTask: [],
+        script: null,
+        params: []
       },
-      parentName: [],
-      originResource: [],
-      rules: {}
+      selectOptions: [{}],
+      schemas: {},
+      paramsArray: [],
+      rules: {},
+      oldValue: "",
+      isSave: true
+    };
+  },
+  watch: {
+    shellData: {
+      immediate: true,
+      deep: true,
+      handler (val) {
+        this.$emit('paramsCom', val)
+      }
+    },
+    paramsArray: {
+      immediate: true,
+      deep: true,
+      handler (val) {
+        this.shellData.params = val
+      }
     }
   },
+  mounted() {
+    this.initEditor();
+    this.initSchemas();
+  },
   methods: {
-    clearChecked (e) {
-      this.originResource.map((item, index) => {
-        if (item.label === e) {
-          this.shellData["resource"].splice(index, 1)
-          this.originResource.splice(index, 1)
-          this.$refs.tree.setChecked(item.id, false)
-        }
-      })
-    },
-    clearAllChecked () {
-      this.shellData["resource"] = []
-      this.originResource = []
-      this.$refs.tree.setCheckedKeys([])
-    },
-    handleCheckChange (e, checked) {
-      console.log(e, checked)
-      const checkValue = checked.checkedKeys.includes(e.id)
-      if (!checkValue) {
-        if (checked.checkedKeys.length === 0) {
-          this.shellData["resource"] = []
-          this.originResource = []
-          this.parentName = []
-        } else {
-          if (this.shellData["resource"].length > 0) {
-            const index = this.shellData["resource"].findIndex(item => item === e.id)
-            this.shellData["resource"].splice(index, 1)
-            this.parentName.splice(index, 1)
-            this.originResource.splice(index, 1)
-          }
-        }
-      } else {
-        this.handleNodeClick(e)
+    initSchemas() {
+      const schemas = Object.assign({}, dataParams);
+      this.schemas = schemas?.shellForm;
+      // const paramsObject = this.schemas.paramsValue.reduce((pre, cur) => {
+      //   pre[cur.prop] = cur.value;
+      //   return pre;
+      // }, {});
+      const paramsObject = {
+        prop: 'ss',
+        inOut: 'in',
+        paramsOption: 'var',
+        value: 'aa'
       }
+      this.paramsArray.push(paramsObject);
     },
-    handleNodeClick (e) {
-      const list = this.getTreeName(this.resource, e.id)
-      const resourceLen = this.shellData["resource"].length > 0 ? this.shellData["resource"] : false
-      if (resourceLen) {
-        for (let i = 0; i < resourceLen.length; i++) {
-          const item = resourceLen[i]
-          if (item === e.id) {
-            return
-          } else {
-            if (i === (resourceLen.length - 1)) {
-              this.shellData["resource"].push(list.id)
-              this.parentName.push(list.label)
-              this.originResource.push(list)
-            }
+    initEditor() {
+      // 初始化编辑器，确保dom已经渲染
+      this.editor = monaco.editor.create(document.getElementById("container"), {
+          value: "",
+          language: "sql",
+          automaticLayout: true,
+          theme: "vs-dark" //官方自带三种主题vs, hc-black, or vs-dark
+      });
+      this.editor.onKeyUp(() => {
+          // 当键盘按下，判断当前编辑器文本与已保存的编辑器文本是否一致
+          if (this.editor.getValue() != this.oldValue) {
+              this.isSave = false;
+              this.shellData.script = this.editor.getValue()
           }
-        }
-      } else {
-        this.shellData["resource"].push(list.id)
-        this.parentName.push(list.label)
-        this.originResource.push(list)
-      }
+      });
     },
-    getTreeName(list, id) {
-      if (list?.length) {
-        for (let i = 0; i < list.length; i++) {
-          const a = list[i];
-          if (a.id === id) {
-            return a;
-          } else {
-            if (a.children && a.children.length > 0) {
-              const res = this.getTreeName(a.children, id);
-              if (res) {
-                return res;
-              }
-            }
-          }
-        }
+      //保存编辑器方法
+      saveEditor() {
+          this.oldValue = this.editor.getValue();
+          // ...保存逻辑
+      },
+      handleCheckChange() {
+          const checkNodes = this.$refs.tree.getCheckedNodes(true);
+          this.selectOptions = checkNodes.length > 0 ? checkNodes : [{}];
+          this.shellData.resource = this.selectOptions.filter(item => !!item.id).map((item) => item.id);
+      },
+      changeSelect(data) {
+          this.$refs.tree.setCheckedKeys(data);
       }
-    }
   }
 }
 </script>
@@ -181,5 +197,8 @@ export default {
 <style lang="scss" scoped>
 .drawer__content {
   padding: 0px 20px;
+}
+#container {
+  min-height: 100px;
 }
 </style>

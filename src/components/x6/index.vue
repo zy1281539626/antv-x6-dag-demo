@@ -1,27 +1,36 @@
 <template>
   <div class="graph-wrap">
-    <div v-if="editable" class="stencil-container" ref="stencilContainer"></div>
-    <div class="graph-container" :class="{ editMode: editable }">
-      <div style="flex: 1" ref="graphContainer"></div>
+    <toolbar />
+    <div class="graph-canvas">
+      <div v-if="editable" class="stencil-container" ref="stencilContainer"></div>
+      <div class="graph-container" :class="{ editMode: editable }">
+        <div style="flex: 1" ref="graphContainer"></div>
+      </div>
     </div>
     <el-drawer 
       title="当前节点设置" 
-      :before-close="cancelForm" 
+      :before-close="cancelForm"
       :visible.sync="cellDialog" 
       direction="rtl" 
       :size="650" 
       ref="drawer"
       :modal="false"
     >
-      <base-form :editable="editable" :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
-      </base-form>
-      <component :is="drawerFormName"></component>
+      <div class="wrap">
+        <base-form :editable="editable" :schemasDataAll.sync="schemasData" :cellDialog.sync="cellDialog" :action="true">
+        </base-form>
+        <component :editable="editable" :is="drawerFormName" @paramsCom="getComponParam"></component>
+      </div>
+      <div class="footerBtn">
+        <el-button type="primary" @click="onSubmit">提交</el-button>
+        <el-button @click="cellDialog = false">取消</el-button>
+      </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
-import {
+import {  
   initGraph,
   registerComponents,
   initStencilPanel,
@@ -33,13 +42,17 @@ import dataSetCell from "@/mock/index"
 // import BaseForm from '@/components/form/index.vue'
 import BaseForm from '@/components/form/BaseForm.vue'
 import shell from '@/components/form/Shell.vue'
+import sql from '@/components/form/Sql.vue'
+import Toolbar from '@/components/x6/Toolbar.vue'
 import "./assets/iconfont/iconfont.css";
 
 export default {
   name: "x6",
   components: {
     BaseForm,
-    shell
+    shell,
+    sql,
+    Toolbar
   },
   data() {
     return {
@@ -83,7 +96,7 @@ export default {
         ],
       ],
       cellDialog: false,
-      schemas: {}
+      schemas: {},
     };
   },
   props: {
@@ -147,6 +160,15 @@ export default {
         renderGraphData(this.graph, this.nodesData);
         this.graph.centerContent();
       }
+    },
+    getComponParam(val) {
+      this.schemasData = {
+        ...this.schemasData,
+        ...val
+      }
+    },
+    onSubmit () {
+      console.log(this.schemasData)
     },
     showNodeStatus(statusList) {
       const status = statusList.shift();
@@ -218,7 +240,17 @@ export default {
   position: relative;
   display: flex;
   height: 100%;
+  flex-direction: column;
+  background: #f2f3f7;
+  padding: 10px;
   overflow: hidden;
+  .graph-canvas {
+    display: flex;
+    overflow: hidden;
+    height: calc(100% - 50px);
+    padding: 10px 0 0;
+    box-sizing: border-box;
+  }
   .stencil-container {
     position: absolute;
     width: 250px;
@@ -272,6 +304,30 @@ export default {
         background-color: #c3c3c3;
       }
     }
+  }
+}
+.wrap {
+  overflow-y: scroll;
+  height: calc(100% - 60px);
+}
+::v-deep .el-drawer__header {
+  border-bottom: 1px solid #dcdedc;
+  padding: 20px;
+}
+.footerBtn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #dcdedc;
+  height: 60px;
+  line-height: 60px;
+  text-align: right;
+  padding-right: 20px;
+  .el-button {
+    // position: relative;
+    z-index: 9;
   }
 }
 </style>
